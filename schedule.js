@@ -45,26 +45,26 @@ const emptySchedule = {
         'night': ''
     }
 };
-const employeeList = {
+const employeeObject = {
     'Emp 1' : {
         'datesUnavailable' : [],
-        'remainingShifts' : 0
+        'remainingShifts' : 2
     }, 
     'Emp 2' : {
         'datesUnavailable' : [],
-        'remainingShifts' : 0
+        'remainingShifts' : 2
     },
     'Emp 3' : {
         'datesUnavailable' : [],
-        'remainingShifts' : 0
+        'remainingShifts' : 2
     },
     'Emp 4' : {
         'datesUnavailable' : [],
-        'remainingShifts' : 0
+        'remainingShifts' : 2
     },
     'Emp 5' : {
         'datesUnavailable' : [],
-        'remainingShifts' : 0
+        'remainingShifts' : 2
     },
 };
 
@@ -161,11 +161,30 @@ computeSchedule(emptySchedule, 'Emp2');
 computeSchedule(emptySchedule, 'Emp3');
 computeSchedule(emptySchedule, 'Emp4');
 
-console.log(emptySchedule)
+//console.log(emptySchedule)
 
+let employeeNames = Object.keys(employeeObject);
+let empNameAndShift = new Map();
+let empNameAndUnavail = new Map();
 
+let obj = Object.entries(employeeObject).map(emp => {
+    let empName = emp[0];
+        console.log(empName)
+    let datesUnavailable = emp[1]['datesUnavailable'];
+    let remainingShifts = emp[1]['remainingShifts'];
 
+    empNameAndShift.set(empName, remainingShifts);
+    empNameAndUnavail.set(empName, datesUnavailable);
+})
 
+const empNameAndShiftSorted = new Map([...empNameAndShift.entries()].sort((a, b) => b[1] - a[1]));
+
+let x = empNameAndShiftSorted.entries();
+let result = x.next();
+while (!result.done) {
+ console.log(result.value); // 1 3 5 7 9
+ result = x.next();
+}
 
 
 
