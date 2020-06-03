@@ -23,9 +23,50 @@ const emptySchedule = {
     '05.01.2020': {
         'day': '',
         'night': ''
+    },
+    '06.01.2020': {
+        'day': '',
+        'night': ''
+    },
+    '07.01.2020': {
+        'day': '',
+        'night': ''
+    },
+    '08.01.2020': {
+        'day': '',
+        'night': ''
+    },
+    '09.01.2020': {
+        'day': '',
+        'night': ''
+    },
+    '10.01.2020': {
+        'day': '',
+        'night': ''
     }
-}
-const employeeList = ['Emp 1', 'Emp 2', 'Emp 3', 'Emp 4'];
+};
+const employeeList = {
+    'Emp 1' : {
+        'datesUnavailable' : [],
+        'remainingShifts' : 0
+    }, 
+    'Emp 2' : {
+        'datesUnavailable' : [],
+        'remainingShifts' : 0
+    },
+    'Emp 3' : {
+        'datesUnavailable' : [],
+        'remainingShifts' : 0
+    },
+    'Emp 4' : {
+        'datesUnavailable' : [],
+        'remainingShifts' : 0
+    },
+    'Emp 5' : {
+        'datesUnavailable' : [],
+        'remainingShifts' : 0
+    },
+};
 
 
 /*
