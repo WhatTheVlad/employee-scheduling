@@ -1,0 +1,21 @@
+{
+  "name": "employee-scheduling",
+  "version": "1.0.0",
+  "description": "App designed to automatically generate employee shift based on legal break time between shifts, number of employees and working days.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WhatTheVlad/employee-scheduling.git"
+  },
+  "keywords": [],
+  "author": "WhaTTheVlad",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WhatTheVlad/employee-scheduling/issues"
+  },
+  "homepage": "https://github.com/WhatTheVlad/employee-scheduling#readme",
+  "dependencies": {}
+}
