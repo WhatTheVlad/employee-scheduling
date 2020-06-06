@@ -170,10 +170,39 @@ function computeSchedule(initialSchedule) {
     let currentDay = Object.entries(newSchedule)[workdayIndex];
     let prevDay = Object.entries(newSchedule)[workdayIndex - 1];
     let prevDay2 = Object.entries(newSchedule)[workdayIndex - 2];
+    let availableEmployee = '';
 
-    if (workdayIndex > 1) {
+    if (workdayIndex == 0) {
       if (dayShift == "") {
-        let availableEmployee = getAvailableEmployeeForDayShift(prevDay, prevDay2);
+        availableEmployee = empNameAndShiftSorted.keys().next().value;
+        newSchedule[workday][DAY] = availableEmployee;
+        employeeObject[availableEmployee].remainingShifts = empNameAndShiftSorted.get(availableEmployee) - 1;
+        sortEmployeesByNumerOfShifts(employeeObject);
+      }
+
+      if (nightShift == "") {
+        availableEmployee = getAvailableEmployeeForFirstNightShift(currentDay);
+        newSchedule[workday][NIGHT] = availableEmployee;
+        employeeObject[availableEmployee].remainingShifts = empNameAndShiftSorted.get(availableEmployee) - 1;
+        sortEmployeesByNumerOfShifts(employeeObject);
+      }
+    } else if (workdayIndex == 1) {
+      // if (dayShift == "") {
+      //   availableEmployee = empNameAndShiftSorted.keys().next().value;
+      //   newSchedule[workday][DAY] = availableEmployee;
+      //   employeeObject[availableEmployee].remainingShifts = empNameAndShiftSorted.get(availableEmployee) - 1;
+      //   sortEmployeesByNumerOfShifts(employeeObject);
+      // }
+
+      // if (nightShift == "") {
+      //   availableEmployee = getAvailableEmployeeForFirstNightShift(currentDay);
+      //   newSchedule[workday][NIGHT] = availableEmployee;
+      //   employeeObject[availableEmployee].remainingShifts = empNameAndShiftSorted.get(availableEmployee) - 1;
+      //   sortEmployeesByNumerOfShifts(employeeObject);
+      // }
+    } else {
+      if (dayShift == "") {
+        availableEmployee = getAvailableEmployeeForDayShift(prevDay, prevDay2);
 
         newSchedule[workday][DAY] = availableEmployee;
         employeeObject[availableEmployee].remainingShifts = empNameAndShiftSorted.get(availableEmployee) - 1;
@@ -181,7 +210,7 @@ function computeSchedule(initialSchedule) {
       }
 
       if (nightShift == "") {
-        let availableEmployee = getAvailableEmployeeForNightShift(currentDay, prevDay, prevDay2);
+        availableEmployee = getAvailableEmployeeForNightShift(currentDay, prevDay, prevDay2);
 
         newSchedule[workday][NIGHT] = availableEmployee;
         employeeObject[availableEmployee].remainingShifts = empNameAndShiftSorted.get(availableEmployee) - 1;
@@ -290,14 +319,29 @@ function getAvailableEmployeeForNightShift(currentDay, prevDay, prevDay2) {
     }
 }
 
+function getAvailableEmployeeForFirstNightShift(currentDay) {
+  let empNameAndShiftSortedKeys = empNameAndShiftSorted.keys();
+  let result = empNameAndShiftSortedKeys.next();
+
+  while (!result.done) {
+    if (currentDay[1][DAY] == result.value) {
+      result = empNameAndShiftSortedKeys.next();
+    } else {
+      return result.value;
+    }
+  }
+}
+
 /*
     Execution
 */
 
 setEmployeeVariables(employeeObject);
-scheduleFirstTwoDays(emptySchedule, "01.01.2020", "02.01.2020", "Emp 1", "Emp 2", "Emp 3");
+//scheduleFirstTwoDays(emptySchedule, "01.01.2020", "02.01.2020", "Emp 1", "Emp 2", "Emp 3");
 computeSchedule(emptySchedule);
 
-console.log(emptySchedule)
+
+
+
 
 
