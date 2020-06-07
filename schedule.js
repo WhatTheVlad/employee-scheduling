@@ -352,8 +352,87 @@ function getAvailableEmployeeForSecondNightShift(previousDay, currentDay) {
 }
 
 /** Tests if the schedule follows rquested rules */
-function testSchedule(schedule) {
+function testSchedule(testSchedule) {
+  let workdaysKeys = Object.keys(testSchedule);
+  let dayShifts = [];
+  let nightShifts = [];
 
+  Object.entries(testSchedule).map((element) => {
+    let workday = element[0];
+    let dayShift = element[1][DAY];
+    let nightShift = element[1][NIGHT];
+    let workdayIndex = workdaysKeys.indexOf(workday);
+    let currentDay = Object.entries(testSchedule)[workdayIndex];
+    let prevDay = Object.entries(testSchedule)[workdayIndex - 1];
+    let prevDay2 = Object.entries(testSchedule)[workdayIndex - 2];
+
+    if (workdayIndex == 0) {
+      if (dayShift == "") {
+        console.log('ERROR: ' + workday + ' ' + DAY + ' shift = NOT COVERED');
+      } else {
+        console.log(workday + ' ' + DAY + ' shift: ' + dayShift)
+        dayShifts.push([workday, [DAY, dayShift]])
+      }
+
+      if (nightShift == "") {
+        console.log('ERROR: ' + workday + ' ' + NIGHT + ' shift = NOT COVERED')
+      } else {
+        if (dayShift == nightShift) {
+          console.log('ERROR: ' + workday + ' ' + NIGHT + ' shift = ' + nightShift + ' INCORRECT ASSIGNMENT')
+        } else {
+          console.log(workday + ' ' + NIGHT + ' shift: ' + nightShift)
+          nightShifts.push([workday, [NIGHT, nightShift]])
+        }
+      }
+    } else if (workdayIndex == 1) {
+      if (dayShift == "") {
+        console.log('ERROR: ' + workday + ' ' + DAY + ' shift = NOT COVERED');
+      } else {
+        if (Object.values(prevDay[1]).includes(dayShift)) {
+          console.log('ERROR: ' + workday + ' ' + DAY + ' shift = ' + dayShift + ' INCORRECT ASSIGNMENT')
+        } else {
+          console.log(workday + ' ' + DAY + ' shift: ' + dayShift)
+          dayShifts.push([workday, [DAY, dayShift]])
+        }
+      }
+
+      if (nightShift == "") {
+        console.log('ERROR: ' + workday + ' ' + NIGHT + ' shift = NOT COVERED')
+      } else {
+        if ([prevDay[1][NIGHT], currentDay[1][DAY]].includes(nightShift)) {
+          console.log('ERROR: ' + workday + ' ' + NIGHT + ' shift = ' + nightShift + ' INCORRECT ASSIGNMENT')
+        } else {
+          console.log(workday + ' ' + NIGHT + ' shift: ' + nightShift)
+          nightShifts.push([workday, [NIGHT, nightShift]])
+        }
+      }
+    } else {
+      if (dayShift == "") {
+        console.log('ERROR: ' + workday + ' ' + DAY + ' shift = NOT COVERED');
+      } else {
+        if (!checkDayShiftAvailability(dayShift, prevDay, prevDay2)) {
+          console.log('ERROR: ' + workday + ' ' + DAY + ' shift = ' + dayShift + ' INCORRECT ASSIGNMENT')
+        } else {
+          console.log(workday + ' ' + DAY + ' shift: ' + dayShift)
+          dayShifts.push([workday, [DAY, dayShift]])
+        }
+      }
+
+      if (nightShift == "") {
+        console.log('ERROR: ' + workday + ' ' + NIGHT + ' shift = NOT COVERED');
+      } else {
+        if (!checkNightShiftAvailability(nightShift, currentDay, prevDay, prevDay2)) {
+          console.log('ERROR: ' + workday + ' ' + NIGHT + ' shift = ' + nightShift + ' INCORRECT ASSIGNMENT')
+        } else {
+          console.log(workday + ' ' + NIGHT + ' shift: ' + nightShift)
+          nightShifts.push([workday, [NIGHT, nightShift]])
+        }
+      }
+    }
+  })
+
+  //console.log(dayShifts)
+  //console.log(nightShifts)
 }
 
 /*
@@ -362,6 +441,7 @@ function testSchedule(schedule) {
 
 setEmployeeVariables(employeeObject);
 computeSchedule(emptySchedule);
+testSchedule(emptySchedule);
 
 
 
