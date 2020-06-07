@@ -1,5 +1,5 @@
 /*
-    Mock Variables
+    MOCK VARIABLES
 */
 
 const emptySchedule = {
@@ -145,7 +145,7 @@ const employeeObject = {
 };
 
 /*
-    App Variables
+    APP VARIABLES
 */
 const DAY = "day";
 const NIGHT = "night";
@@ -153,8 +153,9 @@ let empNames = [];
 let empNameAndShiftSorted = new Map();
 let empNameAndUnavail = new Map();
 
+
 /*
-    Util Functions
+    UTIL FUNCTIONS
 */
 
 /** Main function. Computes schedule according to all rules and filters. */
@@ -217,6 +218,7 @@ function computeSchedule(initialSchedule) {
       }
     }
   });
+  console.log(newSchedule);
   return newSchedule;
 }
 
@@ -351,6 +353,46 @@ function getAvailableEmployeeForSecondNightShift(previousDay, currentDay) {
   }
 }
 
+//Returns a date after given number of days.
+Date.prototype.addDays = function(days) {
+  var date = new Date(this.valueOf());
+  date.setDate(date.getDate() + days);
+  return date;
+}
+
+//Returns an array containing all dates between two given dates.
+function getDates(startDate, stopDate) {
+  var dateArray = new Array();
+  var currentDate = startDate.addDays(1);
+  while (currentDate <= stopDate.addDays(1)) {
+      dateArray.push(new Date (currentDate));
+      currentDate = currentDate.addDays(1);
+  }
+  return dateArray;
+}
+
+//Returns a formatted string
+function GetFormattedDate(date) {
+  let newDate = new Date(date);
+  var month = newDate.getMonth() + 1;
+  var day = newDate.getDate();
+  var year = newDate.getFullYear();
+
+  if (parseInt(month) <= 9) {
+    month = '0' + month
+  }
+
+  if (parseInt(day) <= 9) {
+    day = '0' + day
+  }
+  return day + "." + month + "." + year;
+}
+
+
+/*
+    TEST FUNCTIONS
+*/
+
 /** Tests if the schedule follows rquested rules */
 function testSchedule(testSchedule) {
   let workdaysKeys = Object.keys(testSchedule);
@@ -436,18 +478,24 @@ function testSchedule(testSchedule) {
 }
 
 /*
-    Execution
+    EXECUTION
 */
 
+let dateArray = getDates(new Date('2020/09/25'), new Date('2020/10/05'));
+
+let dayJson = {}
+let shiftJson = {
+  day: "",
+  night: "",
+}
+
+dateArray.forEach(date => {
+  let formattedDate = GetFormattedDate(date)
+  dayJson[formattedDate] = shiftJson
+})
+
+
 setEmployeeVariables(employeeObject);
-computeSchedule(emptySchedule);
-testSchedule(emptySchedule);
-
-
-
-
-
-
-
-
+computeSchedule(dayJson);
+//testSchedule(emptySchedule);
 
