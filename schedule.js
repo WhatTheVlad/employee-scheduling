@@ -187,19 +187,18 @@ function computeSchedule(initialSchedule) {
         sortEmployeesByNumerOfShifts(employeeObject);
       }
     } else if (workdayIndex == 1) {
-      // if (dayShift == "") {
-      //   availableEmployee = empNameAndShiftSorted.keys().next().value;
-      //   newSchedule[workday][DAY] = availableEmployee;
-      //   employeeObject[availableEmployee].remainingShifts = empNameAndShiftSorted.get(availableEmployee) - 1;
-      //   sortEmployeesByNumerOfShifts(employeeObject);
-      // }
-
-      // if (nightShift == "") {
-      //   availableEmployee = getAvailableEmployeeForFirstNightShift(currentDay);
-      //   newSchedule[workday][NIGHT] = availableEmployee;
-      //   employeeObject[availableEmployee].remainingShifts = empNameAndShiftSorted.get(availableEmployee) - 1;
-      //   sortEmployeesByNumerOfShifts(employeeObject);
-      // }
+      if (dayShift == "") {
+        availableEmployee = getAvailableEmployeeForSecondDayShift(prevDay);
+        newSchedule[workday][DAY] = availableEmployee;
+        employeeObject[availableEmployee].remainingShifts = empNameAndShiftSorted.get(availableEmployee) - 1;
+        sortEmployeesByNumerOfShifts(employeeObject);
+      }
+      if (nightShift == "") {
+        availableEmployee = getAvailableEmployeeForSecondNightShift(prevDay, currentDay);
+        newSchedule[workday][NIGHT] = availableEmployee;
+        employeeObject[availableEmployee].remainingShifts = empNameAndShiftSorted.get(availableEmployee) - 1;
+        sortEmployeesByNumerOfShifts(employeeObject);
+      }
     } else {
       if (dayShift == "") {
         availableEmployee = getAvailableEmployeeForDayShift(prevDay, prevDay2);
@@ -248,17 +247,7 @@ function checkNightShiftAvailability(employee, currentDay, prevDay, prevDay2) {
   }
 }
 
-/** Schedules employees for the first two days */
-function scheduleFirstTwoDays(schedule, firstDay, secondDay, emp1, emp2, emp3) {
-  schedule[firstDay][DAY] = emp1;
-  schedule[firstDay][NIGHT] = emp2;
-  schedule[secondDay][DAY] = emp3;
-  schedule[secondDay][NIGHT] = emp1;
-
-  return schedule;
-}
-
-/** Central function for computing all employee-related variables. */
+/** Central function for computing employee-related variables. */
 function setEmployeeVariables(employeeObject) {
   empNames = Object.keys(employeeObject);
   sortEmployeesByNumerOfShifts(employeeObject);
@@ -319,6 +308,7 @@ function getAvailableEmployeeForNightShift(currentDay, prevDay, prevDay2) {
     }
 }
 
+/** Returns the employee most suitable to work the first night shift */
 function getAvailableEmployeeForFirstNightShift(currentDay) {
   let empNameAndShiftSortedKeys = empNameAndShiftSorted.keys();
   let result = empNameAndShiftSortedKeys.next();
@@ -332,13 +322,49 @@ function getAvailableEmployeeForFirstNightShift(currentDay) {
   }
 }
 
+/** Returns the employee most suitable to work the second day shift */
+function getAvailableEmployeeForSecondDayShift(previousDay) {
+  let empNameAndShiftSortedKeys = empNameAndShiftSorted.keys();
+  let result = empNameAndShiftSortedKeys.next();
+
+  while (!result.done) {
+    if (Object.values(previousDay[1]).includes(result.value)) {
+      result = empNameAndShiftSortedKeys.next();
+    } else {
+      return result.value;
+    }
+  }
+}
+
+/** Returns the employee most suitable to work the second day shift */
+function getAvailableEmployeeForSecondNightShift(previousDay, currentDay) {
+  let empNameAndShiftSortedKeys = empNameAndShiftSorted.keys();
+  let result = empNameAndShiftSortedKeys.next();
+  let restShifts = [previousDay[1][NIGHT], currentDay[1][DAY]]
+
+  while (!result.done) {
+    if (restShifts.includes(result.value)) {
+      result = empNameAndShiftSortedKeys.next();
+    } else {
+      return result.value;
+    }
+  }
+}
+
+/** Tests if the schedule follows rquested rules */
+function testSchedule(schedule) {
+
+}
+
 /*
     Execution
 */
 
 setEmployeeVariables(employeeObject);
-//scheduleFirstTwoDays(emptySchedule, "01.01.2020", "02.01.2020", "Emp 1", "Emp 2", "Emp 3");
 computeSchedule(emptySchedule);
+
+
+
 
 
 
