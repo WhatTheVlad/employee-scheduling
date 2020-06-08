@@ -2,125 +2,7 @@
     MOCK VARIABLES
 */
 
-const emptySchedule = {
-  "01.01.2020": {
-    day: "",
-    night: "",
-  },
-  "02.01.2020": {
-    day: "",
-    night: "",
-  },
-  "03.01.2020": {
-    day: "",
-    night: "",
-  },
-  "04.01.2020": {
-    day: "",
-    night: "",
-  },
-  "05.01.2020": {
-    day: "",
-    night: "",
-  },
-  "06.01.2020": {
-    day: "",
-    night: "",
-  },
-  "07.01.2020": {
-    day: "",
-    night: "",
-  },
-  "08.01.2020": {
-    day: "",
-    night: "",
-  },
-  "09.01.2020": {
-    day: "",
-    night: "",
-  },
-  "10.01.2020": {
-    day: "",
-    night: "",
-  },
-  "11.01.2020": {
-    day: "",
-    night: "",
-  },
-  "12.01.2020": {
-    day: "",
-    night: "",
-  },
-  "13.01.2020": {
-    day: "",
-    night: "",
-  },
-  "14.01.2020": {
-    day: "",
-    night: "",
-  },
-  "15.01.2020": {
-    day: "",
-    night: "",
-  },
-  "16.01.2020": {
-    day: "",
-    night: "",
-  },
-  "17.01.2020": {
-    day: "",
-    night: "",
-  },
-  "18.01.2020": {
-    day: "",
-    night: "",
-  },
-  "19.01.2020": {
-    day: "",
-    night: "",
-  },
-  "20.01.2020": {
-    day: "",
-    night: "",
-  },
-  "21.01.2020": {
-    day: "",
-    night: "",
-  },
-  "22.01.2020": {
-    day: "",
-    night: "",
-  },
-  "23.01.2020": {
-    day: "",
-    night: "",
-  },
-  "24.01.2020": {
-    day: "",
-    night: "",
-  },
-  "25.01.2020": {
-    day: "",
-    night: "",
-  },
-  "26.01.2020": {
-    day: "",
-    night: "",
-  },
-  "27.01.2020": {
-    day: "",
-    night: "",
-  },
-  "28.01.2020": {
-    day: "",
-    night: "",
-  },
-  "29.01.2020": {
-    day: "",
-    night: "",
-  },
-};
-
+const dayJson = {}
 const employeeObject = {
   "Emp 1": {
     datesUnavailable: [],
@@ -363,8 +245,8 @@ Date.prototype.addDays = function(days) {
 //Returns an array containing all dates between two given dates.
 function getDates(startDate, stopDate) {
   var dateArray = new Array();
-  var currentDate = startDate.addDays(1);
-  while (currentDate <= stopDate.addDays(1)) {
+  var currentDate = startDate;
+  while (currentDate <= stopDate) {
       dateArray.push(new Date (currentDate));
       currentDate = currentDate.addDays(1);
   }
@@ -372,7 +254,7 @@ function getDates(startDate, stopDate) {
 }
 
 //Returns a formatted string
-function GetFormattedDate(date) {
+function getFormattedDate(date) {
   let newDate = new Date(date);
   var month = newDate.getMonth() + 1;
   var day = newDate.getDate();
@@ -386,6 +268,16 @@ function GetFormattedDate(date) {
     day = '0' + day
   }
   return day + "." + month + "." + year;
+}
+
+/** Generates a JSON object with day and night shifts between two given dates */
+function generateScheduleJson(startDate, endDate) {
+  const dateArray = getDates(new Date(startDate), new Date(endDate));
+
+  dateArray.forEach(date => {
+    let formattedDate = getFormattedDate(date)
+    dayJson[formattedDate] = { day: '', night: '' }
+  })
 }
 
 
@@ -481,21 +373,10 @@ function testSchedule(testSchedule) {
     EXECUTION
 */
 
-let dateArray = getDates(new Date('2020/09/25'), new Date('2020/10/05'));
 
-let dayJson = {}
-let shiftJson = {
-  day: "",
-  night: "",
-}
-
-dateArray.forEach(date => {
-  let formattedDate = GetFormattedDate(date)
-  dayJson[formattedDate] = shiftJson
-})
-
-
+generateScheduleJson('2020/01/01','2020/01/10')
 setEmployeeVariables(employeeObject);
 computeSchedule(dayJson);
 //testSchedule(emptySchedule);
+
 
