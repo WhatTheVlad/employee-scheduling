@@ -5,7 +5,7 @@
 const dayJson = {}
 const employeeObject = {
   "Emp 1": {
-    datesUnavailable: [],
+    datesUnavailable: ['01.01.2020'],
     remainingShifts: 13,
   },
   "Emp 2": {
@@ -13,7 +13,7 @@ const employeeObject = {
     remainingShifts: 11,
   },
   "Emp 3": {
-    datesUnavailable: [],
+    datesUnavailable: ['01.01.2020', '03.01.2020', '03.01.2020'],
     remainingShifts: 12,
   },
   "Emp 4": {
@@ -280,6 +280,15 @@ function generateScheduleJson(startDate, endDate) {
   })
 }
 
+/** */
+function checkDatesUnavailable(workday, employee, employeeObject) {
+  let datesUnavailable = employeeObject[employee]['datesUnavailable']
+  if (datesUnavailable.includes(workday)) {
+    return true
+  } else {
+    return false
+  }
+}
 
 /*
     TEST FUNCTIONS
