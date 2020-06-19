@@ -2,7 +2,7 @@
     MOCK VARIABLES
 */
 
-const dayJson = {}
+const dayJson = {};
 const employeeObject = {
   "Emp 1": {
     datesUnavailable: ['01.01.2020'],
@@ -53,11 +53,12 @@ function computeSchedule(newSchedule) {
     if (workdayIndex == 0) {
       scheduleFirstDay(newSchedule, workday, dayShift, nightShift, currentDay);
     } else if (workdayIndex == 1) {
-      scheduleSecondDay(newSchedule, workday, dayShift, nightShift, prevDay, currentDay)
+      scheduleSecondDay(newSchedule, workday, dayShift, nightShift, prevDay, currentDay);
     } else {
-      scheduleRemainingDays(newSchedule, workday, dayShift, nightShift, prevDay2, prevDay, currentDay)
+      scheduleRemainingDays(newSchedule, workday, dayShift, nightShift, prevDay2, prevDay, currentDay);
     }
   });
+  //console.log(newSchedule);
   return newSchedule;
 }
 
@@ -216,11 +217,11 @@ function getFormattedDate(date) {
   var year = newDate.getFullYear();
 
   if (parseInt(month) <= 9) {
-    month = '0' + month
+    month = '0' + month;
   }
 
   if (parseInt(day) <= 9) {
-    day = '0' + day
+    day = '0' + day;
   }
   
   return day + "." + month + "." + year;
@@ -231,28 +232,28 @@ function generateScheduleJson(startDate, endDate) {
   const dateArray = getDates(new Date(startDate), new Date(endDate));
 
   dateArray.forEach(date => {
-    let formattedDate = getFormattedDate(date)
-    dayJson[formattedDate] = { day: '', night: '' }
+    let formattedDate = getFormattedDate(date);
+    dayJson[formattedDate] = { day: '', night: '' };
   })
 }
 
 /** Checks the dates for which an employee is unavailable i.e. vacation, medical leave, other absences */
 function checkDatesUnavailable(workday, employee, employeeObject) {
-  let datesUnavailable = employeeObject[employee]['datesUnavailable']
+  let datesUnavailable = employeeObject[employee]['datesUnavailable'];
   if (datesUnavailable.includes(workday)) {
-    return true
+    return true;
   } else {
-    return false
+    return false;
   }
 }
 
 /** Generates the employee schedule for the first day */
 function scheduleFirstDay(newSchedule, workday, dayShift, nightShift, currentDay) {
   if (dayShift == "") {
-    scheduleDayShiftFirstDay(newSchedule, workday)
+    scheduleDayShiftFirstDay(newSchedule, workday);
   }
   if (nightShift == "") {
-    scheduleNightShiftFirstDay(newSchedule, workday, currentDay)
+    scheduleNightShiftFirstDay(newSchedule, workday, currentDay);
   }
 }
 
@@ -275,10 +276,10 @@ function scheduleNightShiftFirstDay(newSchedule, workday, currentDay) {
 /** Generates the employee schedule for the second day */
 function scheduleSecondDay(newSchedule, workday, dayShift, nightShift, prevDay, currentDay) {
   if (dayShift == "") {
-    scheduleDayShiftSecondDay(newSchedule, workday, prevDay)
+    scheduleDayShiftSecondDay(newSchedule, workday, prevDay);
   }
   if (nightShift == "") {
-    scheduleNightShiftSecondDay(newSchedule, workday, prevDay, currentDay)
+    scheduleNightShiftSecondDay(newSchedule, workday, prevDay, currentDay);
   }
 }
 
@@ -301,10 +302,10 @@ function scheduleNightShiftSecondDay(newSchedule, workday, prevDay, currentDay) 
 /** Generates the employee schedule for the remaining days */
 function scheduleRemainingDays(newSchedule, workday, dayShift, nightShift, prevDay2, prevDay, currentDay) {
   if (dayShift == "") {
-    scheduleDayShiftRemainingDays(newSchedule, workday, prevDay, prevDay2)
+    scheduleDayShiftRemainingDays(newSchedule, workday, prevDay, prevDay2);
   }
   if (nightShift == "") {
-    scheduleNightShiftRemainingDays(newSchedule, workday, prevDay2, prevDay, currentDay)
+    scheduleNightShiftRemainingDays(newSchedule, workday, prevDay2, prevDay, currentDay);
   }
 }
 
@@ -347,18 +348,18 @@ function testSchedule(testSchedule) {
       if (dayShift == "") {
         console.log('ERROR: ' + workday + ' ' + DAY + ' shift = NOT COVERED');
       } else {
-        console.log(workday + ' ' + DAY + ' shift: ' + dayShift)
-        dayShifts.push([workday, [DAY, dayShift]])
+        console.log(workday + ' ' + DAY + ' shift: ' + dayShift);
+        dayShifts.push([workday, [DAY, dayShift]]);
       }
 
       if (nightShift == "") {
-        console.log('ERROR: ' + workday + ' ' + NIGHT + ' shift = NOT COVERED')
+        console.log('ERROR: ' + workday + ' ' + NIGHT + ' shift = NOT COVERED');
       } else {
         if (dayShift == nightShift) {
-          console.log('ERROR: ' + workday + ' ' + NIGHT + ' shift = ' + nightShift + ' INCORRECT ASSIGNMENT')
+          console.log('ERROR: ' + workday + ' ' + NIGHT + ' shift = ' + nightShift + ' INCORRECT ASSIGNMENT');
         } else {
-          console.log(workday + ' ' + NIGHT + ' shift: ' + nightShift)
-          nightShifts.push([workday, [NIGHT, nightShift]])
+          console.log(workday + ' ' + NIGHT + ' shift: ' + nightShift);
+          nightShifts.push([workday, [NIGHT, nightShift]]);
         }
       }
     } else if (workdayIndex == 1) {
@@ -366,21 +367,21 @@ function testSchedule(testSchedule) {
         console.log('ERROR: ' + workday + ' ' + DAY + ' shift = NOT COVERED');
       } else {
         if (Object.values(prevDay[1]).includes(dayShift)) {
-          console.log('ERROR: ' + workday + ' ' + DAY + ' shift = ' + dayShift + ' INCORRECT ASSIGNMENT')
+          console.log('ERROR: ' + workday + ' ' + DAY + ' shift = ' + dayShift + ' INCORRECT ASSIGNMENT');
         } else {
-          console.log(workday + ' ' + DAY + ' shift: ' + dayShift)
-          dayShifts.push([workday, [DAY, dayShift]])
+          console.log(workday + ' ' + DAY + ' shift: ' + dayShift);
+          dayShifts.push([workday, [DAY, dayShift]]);
         }
       }
 
       if (nightShift == "") {
-        console.log('ERROR: ' + workday + ' ' + NIGHT + ' shift = NOT COVERED')
+        console.log('ERROR: ' + workday + ' ' + NIGHT + ' shift = NOT COVERED');
       } else {
         if ([prevDay[1][NIGHT], currentDay[1][DAY]].includes(nightShift)) {
-          console.log('ERROR: ' + workday + ' ' + NIGHT + ' shift = ' + nightShift + ' INCORRECT ASSIGNMENT')
+          console.log('ERROR: ' + workday + ' ' + NIGHT + ' shift = ' + nightShift + ' INCORRECT ASSIGNMENT');
         } else {
-          console.log(workday + ' ' + NIGHT + ' shift: ' + nightShift)
-          nightShifts.push([workday, [NIGHT, nightShift]])
+          console.log(workday + ' ' + NIGHT + ' shift: ' + nightShift);
+          nightShifts.push([workday, [NIGHT, nightShift]]);
         }
       }
     } else {
@@ -388,10 +389,10 @@ function testSchedule(testSchedule) {
         console.log('ERROR: ' + workday + ' ' + DAY + ' shift = NOT COVERED');
       } else {
         if (!checkDayShiftAvailability(dayShift, prevDay, prevDay2)) {
-          console.log('ERROR: ' + workday + ' ' + DAY + ' shift = ' + dayShift + ' INCORRECT ASSIGNMENT')
+          console.log('ERROR: ' + workday + ' ' + DAY + ' shift = ' + dayShift + ' INCORRECT ASSIGNMENT');
         } else {
-          console.log(workday + ' ' + DAY + ' shift: ' + dayShift)
-          dayShifts.push([workday, [DAY, dayShift]])
+          console.log(workday + ' ' + DAY + ' shift: ' + dayShift);
+          dayShifts.push([workday, [DAY, dayShift]]);
         }
       }
 
@@ -399,10 +400,10 @@ function testSchedule(testSchedule) {
         console.log('ERROR: ' + workday + ' ' + NIGHT + ' shift = NOT COVERED');
       } else {
         if (!checkNightShiftAvailability(nightShift, currentDay, prevDay, prevDay2)) {
-          console.log('ERROR: ' + workday + ' ' + NIGHT + ' shift = ' + nightShift + ' INCORRECT ASSIGNMENT')
+          console.log('ERROR: ' + workday + ' ' + NIGHT + ' shift = ' + nightShift + ' INCORRECT ASSIGNMENT');
         } else {
-          console.log(workday + ' ' + NIGHT + ' shift: ' + nightShift)
-          nightShifts.push([workday, [NIGHT, nightShift]])
+          console.log(workday + ' ' + NIGHT + ' shift: ' + nightShift);
+          nightShifts.push([workday, [NIGHT, nightShift]]);
         }
       }
     }
@@ -417,7 +418,7 @@ function testSchedule(testSchedule) {
 */
 
 
-generateScheduleJson('2020/01/01','2020/01/30')
+generateScheduleJson('2020/01/01','2020/01/30');
 setEmployeeVariables(employeeObject);
 computeSchedule(dayJson);
 testSchedule(dayJson);
