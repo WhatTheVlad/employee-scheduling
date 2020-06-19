@@ -5,7 +5,7 @@
 const dayJson = {};
 const employeeObject = {
   "Emp 1": {
-    datesUnavailable: ['01.01.2020'],
+    datesUnavailable: [],
     totalShifts: 0
   },
   "Emp 2": {
@@ -13,7 +13,7 @@ const employeeObject = {
     totalShifts: 0
   },
   "Emp 3": {
-    datesUnavailable: ['01.01.2020'],
+    datesUnavailable: ['07.01.2020', '08.01.2020', '09.01.2020', '10.01.2020', '11.01.2020'],
     totalShifts: 0
   },
   "Emp 4": {
@@ -35,7 +35,6 @@ let empNameAndShiftSorted = new Map();
 let empNameAndUnavail = new Map();
 let minimumShifts = 0;
 let remainingShifts = 0;
-
 
 /*
     UTIL FUNCTIONS
@@ -153,13 +152,13 @@ function getEmployeesUnavailable(employeeObject) {
 }
 
 /** Returns the employee most suitable to work a day shift */
-function getAvailableEmployeeForDayShift(prevDay, prevDay2) {
+function getAvailableEmployeeForDayShift(workday, prevDay, prevDay2) {
   let empNameAndShiftSortedKeys = empNameAndShiftSorted.keys();
   let result = empNameAndShiftSortedKeys.next();
 
   while (!result.done) {
-    if (checkDayShiftAvailability(result.value, prevDay, prevDay2)) {
-      return result.value;
+    if (checkDayShiftAvailability(result.value, prevDay, prevDay2) && isEmployeeAvailable(workday, result.value, employeeObject)) {
+        return result.value;
     } else {
       result = empNameAndShiftSortedKeys.next();
     }
@@ -168,16 +167,31 @@ function getAvailableEmployeeForDayShift(prevDay, prevDay2) {
 
 /** Returns the employee most suitable to work a night shift */
 function getAvailableEmployeeForNightShift(currentDay, prevDay, prevDay2) {
-    let empNameAndShiftSortedKeys = empNameAndShiftSorted.keys();
-    let result = empNameAndShiftSortedKeys.next();
-  
-    while (!result.done) {
-      if (checkNightShiftAvailability(result.value, currentDay, prevDay, prevDay2)) {
-        return result.value;
-      } else {
-        result = empNameAndShiftSortedKeys.next();
-      }
+  let empNameAndShiftSortedKeys = empNameAndShiftSorted.keys();
+  let result = empNameAndShiftSortedKeys.next();
+
+  while (!result.done) {
+    if (checkNightShiftAvailability(result.value, currentDay, prevDay, prevDay2) && 
+        isEmployeeAvailable(currentDay[0], result.value, employeeObject)) {
+      return result.value;
+    } else {
+      result = empNameAndShiftSortedKeys.next();
     }
+  }
+}
+
+/** Returns the employee most suitable to work the first day shift */
+function getAvailableEmployeeForFirstDayShift(currentDay) {
+  let empNameAndShiftSortedKeys = empNameAndShiftSorted.keys();
+  let result = empNameAndShiftSortedKeys.next();
+
+  while (!result.done) {
+    if (isEmployeeAvailable(currentDay[0], result.value, employeeObject)) {
+      return result.value;
+    } else {
+      result = empNameAndShiftSortedKeys.next();
+    }
+  }
 }
 
 /** Returns the employee most suitable to work the first night shift */
@@ -186,7 +200,7 @@ function getAvailableEmployeeForFirstNightShift(currentDay) {
   let result = empNameAndShiftSortedKeys.next();
 
   while (!result.done) {
-    if (currentDay[1][DAY] == result.value) {
+    if (currentDay[1][DAY] == result.value || !isEmployeeAvailable(currentDay[0], result.value, employeeObject)) {
       result = empNameAndShiftSortedKeys.next();
     } else {
       return result.value;
@@ -195,12 +209,12 @@ function getAvailableEmployeeForFirstNightShift(currentDay) {
 }
 
 /** Returns the employee most suitable to work the second day shift */
-function getAvailableEmployeeForSecondDayShift(previousDay) {
+function getAvailableEmployeeForSecondDayShift(previousDay, currentDay) {
   let empNameAndShiftSortedKeys = empNameAndShiftSorted.keys();
   let result = empNameAndShiftSortedKeys.next();
 
   while (!result.done) {
-    if (Object.values(previousDay[1]).includes(result.value)) {
+    if (Object.values(previousDay[1]).includes(result.value) || !isEmployeeAvailable(currentDay[0], result.value, employeeObject)) {
       result = empNameAndShiftSortedKeys.next();
     } else {
       return result.value;
@@ -215,7 +229,7 @@ function getAvailableEmployeeForSecondNightShift(previousDay, currentDay) {
   let restShifts = [previousDay[1][NIGHT], currentDay[1][DAY]]
 
   while (!result.done) {
-    if (restShifts.includes(result.value)) {
+    if (restShifts.includes(result.value) || !isEmployeeAvailable(currentDay[0], result.value, employeeObject)) {
       result = empNameAndShiftSortedKeys.next();
     } else {
       return result.value;
@@ -270,10 +284,11 @@ function generateScheduleJson(startDate, endDate) {
   //console.log(dayJson);
 }
 
-/** Checks the dates for which an employee is unavailable i.e. vacation, medical leave, other absences */
-function checkDatesUnavailable(workday, employee, employeeObject) {
-  let datesUnavailable = employeeObject[employee]['datesUnavailable'];
-  if (datesUnavailable.includes(workday)) {
+/** Returns  true if the employee is available and false if the employee 
+ * is unavailable i.e. vacation, medical leave, other absences */
+function isEmployeeAvailable(workday, employee, employeeObject) {
+  let datesUnavailable = employeeObject[employee]["datesUnavailable"];
+  if (!datesUnavailable.includes(workday)) {
     return true;
   } else {
     return false;
@@ -283,7 +298,7 @@ function checkDatesUnavailable(workday, employee, employeeObject) {
 /** Generates the employee schedule for the first day */
 function scheduleFirstDay(newSchedule, workday, dayShift, nightShift, currentDay) {
   if (dayShift == "") {
-    scheduleDayShiftFirstDay(newSchedule, workday);
+    scheduleDayShiftFirstDay(newSchedule, workday, currentDay);
   }
   if (nightShift == "") {
     scheduleNightShiftFirstDay(newSchedule, workday, currentDay);
@@ -291,25 +306,33 @@ function scheduleFirstDay(newSchedule, workday, dayShift, nightShift, currentDay
 }
 
 /** Assigns the most suitable employee to work the day shift of the first day */
-function scheduleDayShiftFirstDay(newSchedule, workday) {
-    let availableEmployee = empNameAndShiftSorted.keys().next().value;
+function scheduleDayShiftFirstDay(newSchedule, workday, currentDay) {
+  try {
+    let availableEmployee = getAvailableEmployeeForFirstDayShift(currentDay);
     newSchedule[workday][DAY] = availableEmployee;
     employeeObject[availableEmployee].totalShifts = empNameAndShiftSorted.get(availableEmployee) - 1;
     sortEmployeesByNumerOfShifts(employeeObject);
+  } catch (error) {
+    handleSchedulingError(error, DAY, currentDay[0])
+  }
 }
 
 /** Assigns the most suitable employee to work the night shift of the first day */
 function scheduleNightShiftFirstDay(newSchedule, workday, currentDay) {
-    let availableEmployee = getAvailableEmployeeForFirstNightShift(currentDay);
-    newSchedule[workday][NIGHT] = availableEmployee;
-    employeeObject[availableEmployee].totalShifts = empNameAndShiftSorted.get(availableEmployee) - 1;
-    sortEmployeesByNumerOfShifts(employeeObject);
+    try {
+        let availableEmployee = getAvailableEmployeeForFirstNightShift(currentDay);
+        newSchedule[workday][NIGHT] = availableEmployee;
+        employeeObject[availableEmployee].totalShifts = empNameAndShiftSorted.get(availableEmployee) - 1;
+        sortEmployeesByNumerOfShifts(employeeObject);
+    } catch (error) {
+        handleSchedulingError(error, NIGHT, currentDay[0])
+    }
 }
 
 /** Generates the employee schedule for the second day */
 function scheduleSecondDay(newSchedule, workday, dayShift, nightShift, prevDay, currentDay) {
   if (dayShift == "") {
-    scheduleDayShiftSecondDay(newSchedule, workday, prevDay);
+    scheduleDayShiftSecondDay(newSchedule, workday, prevDay, currentDay);
   }
   if (nightShift == "") {
     scheduleNightShiftSecondDay(newSchedule, workday, prevDay, currentDay);
@@ -317,19 +340,27 @@ function scheduleSecondDay(newSchedule, workday, dayShift, nightShift, prevDay, 
 }
 
 /** Assigns the most suitable employee to work the day shift of the second day */
-function scheduleDayShiftSecondDay(newSchedule, workday, prevDay) {
-  let availableEmployee = getAvailableEmployeeForSecondDayShift(prevDay);
-  newSchedule[workday][DAY] = availableEmployee;
-  employeeObject[availableEmployee].totalShifts = empNameAndShiftSorted.get(availableEmployee) - 1;
-  sortEmployeesByNumerOfShifts(employeeObject);
+function scheduleDayShiftSecondDay(newSchedule, workday, prevDay, currentDay) {
+    try {
+        let availableEmployee = getAvailableEmployeeForSecondDayShift(prevDay, currentDay);
+        newSchedule[workday][DAY] = availableEmployee;
+        employeeObject[availableEmployee].totalShifts = empNameAndShiftSorted.get(availableEmployee) - 1;
+        sortEmployeesByNumerOfShifts(employeeObject);
+    } catch (error) {
+        handleSchedulingError(error, DAY, currentDay[0])
+    }
 }
 
 /** Assigns the most suitable employee to work the night shift of the second day */
 function scheduleNightShiftSecondDay(newSchedule, workday, prevDay, currentDay) {
-  let availableEmployee = getAvailableEmployeeForSecondNightShift(prevDay, currentDay);
-  newSchedule[workday][NIGHT] = availableEmployee;
-  employeeObject[availableEmployee].totalShifts = empNameAndShiftSorted.get(availableEmployee) - 1;
-  sortEmployeesByNumerOfShifts(employeeObject);
+    try{
+        let availableEmployee = getAvailableEmployeeForSecondNightShift(prevDay, currentDay);
+        newSchedule[workday][NIGHT] = availableEmployee;
+        employeeObject[availableEmployee].totalShifts = empNameAndShiftSorted.get(availableEmployee) - 1;
+        sortEmployeesByNumerOfShifts(employeeObject);
+    } catch (error) {
+        handleSchedulingError(error, NIGHT, currentDay[0])
+    }  
 }
 
 /** Generates the employee schedule for the remaining days */
@@ -344,18 +375,43 @@ function scheduleRemainingDays(newSchedule, workday, dayShift, nightShift, prevD
 
 /** Assigns the most suitable employee to work the day shift of the remaining days */
 function scheduleDayShiftRemainingDays(newSchedule, workday, prevDay, prevDay2) {
-  let availableEmployee = getAvailableEmployeeForDayShift(prevDay, prevDay2);
-  newSchedule[workday][DAY] = availableEmployee;
-  employeeObject[availableEmployee].totalShifts = empNameAndShiftSorted.get(availableEmployee) - 1;
-  sortEmployeesByNumerOfShifts(employeeObject);
+    try {
+        let availableEmployee = getAvailableEmployeeForDayShift(workday, prevDay, prevDay2);
+        newSchedule[workday][DAY] = availableEmployee;
+        employeeObject[availableEmployee].totalShifts = empNameAndShiftSorted.get(availableEmployee) - 1;
+        sortEmployeesByNumerOfShifts(employeeObject);
+    } catch (error) {
+        handleSchedulingError(error, DAY, workday)
+    }
 }
 
 /** Assigns the most suitable employee to work the night shift of remaining days */
 function scheduleNightShiftRemainingDays(newSchedule, workday, prevDay2, prevDay, currentDay) {
-  let availableEmployee = getAvailableEmployeeForNightShift(currentDay, prevDay, prevDay2);
-  newSchedule[workday][NIGHT] = availableEmployee;
-  employeeObject[availableEmployee].totalShifts = empNameAndShiftSorted.get(availableEmployee) - 1;
-  sortEmployeesByNumerOfShifts(employeeObject);
+    try {
+        let availableEmployee = getAvailableEmployeeForNightShift(currentDay, prevDay, prevDay2);
+        newSchedule[workday][NIGHT] = availableEmployee;
+        employeeObject[availableEmployee].totalShifts = empNameAndShiftSorted.get(availableEmployee) - 1;
+        sortEmployeesByNumerOfShifts(employeeObject);
+    } catch (error) {
+        handleSchedulingError(error, NIGHT, currentDay[0])
+    }
+}
+
+/*
+    ERROR HANDLING FUNCTIONS
+*/
+
+function handleSchedulingError(error, shift, workday) {
+    let romShift;
+    
+     if (shift == DAY) {
+       romShift = "ZI";
+     } else {
+       romShift = "NOAPTE";
+     }
+    
+    console.log(error);
+    console.log('Nu s-a gasit niciun angajat disponibil pentru ziua: ' + workday + ", tura de " + romShift)
 }
 
 /*
