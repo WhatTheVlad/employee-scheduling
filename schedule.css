@@ -71,6 +71,10 @@ input[type=text]+label {
     float: left;
 }
 
+input::placeholder {
+    font-style: italic;
+}
+
 body {
     font-size: xx-large;
     background-color: rgb(115, 116, 185);
