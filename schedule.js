@@ -1,38 +1,12 @@
-/*
-    MOCK VARIABLES
-*/
-
-const dayJson = {};
-const employeeObject = {
-  "Emp 1": {
-    datesUnavailable: [],
-    totalShifts: 0
-  },
-  "Emp 2": {
-    datesUnavailable: [],
-    totalShifts: 0
-  },
-  "Emp 3": {
-    datesUnavailable: ['07.01.2020', '08.01.2020', '09.01.2020', '10.01.2020', '11.01.2020'],
-    totalShifts: 0
-  },
-  "Emp 4": {
-    datesUnavailable: [],
-    totalShifts: 0
-  },
-  "Emp 5": {
-    datesUnavailable: [],
-    totalShifts: 0
-  },
-};
 
 /*
     APP VARIABLES
 */
 const DAY = "day";
 const NIGHT = "night";
+const dayJson = {};
+const employeeObject = {};
 let empNameAndShiftSorted = new Map();
-let empNameAndUnavail = new Map();
 let minimumShifts = 0;
 let remainingShifts = 0;
 
@@ -94,7 +68,6 @@ function checkNightShiftAvailability(employee, currentDay, prevDay, prevDay2) {
 function setEmployeeVariables(dayJson, employeeObject) {
   setEmployeeTotalShifts(dayJson, employeeObject);
   sortEmployeesByNumerOfShifts(employeeObject);
-  getEmployeesUnavailable(employeeObject);
 }
 
 /** Sets the total number of shifts each employee must work, according to the requested timeline. */
@@ -139,16 +112,6 @@ function sortEmployeesByNumerOfShifts(employeeObject) {
   empNameAndShiftSorted = new Map(
     [...empNameAndShift.entries()].sort((a, b) => b[1] - a[1])
   );
-}
-
-/** Returns a map of employee name and unavailable dates for each employee.  */
-function getEmployeesUnavailable(employeeObject) {
-  Object.entries(employeeObject).map((emp) => {
-    let empName = emp[0];
-    let datesUnavailable = emp[1]["datesUnavailable"];
-
-    empNameAndUnavail.set(empName, datesUnavailable);
-  });
 }
 
 /** Returns the employee most suitable to work a day shift */
@@ -397,6 +360,23 @@ function scheduleNightShiftRemainingDays(newSchedule, workday, prevDay2, prevDay
     }
 }
 
+/** Adds an employee element to the employeeObject */
+function addEmployee(empName) {
+  employeeObject[empName] = {
+    datesUnavailable: [],
+    totalShifts: 0
+  }
+}
+
+/** Adds the dates for which an employee is unavailable */
+function addDatesUnavailable(empName, datesUnavailable) {
+  let currentDatesUnavailable = employeeObject[empName]['datesUnavailable'];
+  Object.entries(datesUnavailable).map(date => {
+    currentDatesUnavailable.push(date[1]);
+  });
+  
+}
+
 /*
     ERROR HANDLING FUNCTIONS
 */
@@ -507,11 +487,15 @@ function testSchedule(testSchedule) {
 */
 
 
+addEmployee('Vlad Mocanu');
+addEmployee('Stefana Donighian');
+addEmployee('Alexandru Aghiniei');
+addEmployee('Cristian Zaharia');
+addEmployee('Bogdan Ghirvu');
+addDatesUnavailable('Vlad Mocanu', ['01.01.2020', '02.01.2020', '03.01.2020'])
+addDatesUnavailable('Stefana Donighian', ['01.01.2020', '05.01.2020', '13.01.2020'])
+addDatesUnavailable('Bogdan Ghirvu', ['12.01.2020', '02.01.2020', '14.01.2020'])
 generateScheduleJson('2020/01/01','2020/01/29');
 setEmployeeVariables(dayJson, employeeObject);
 computeSchedule(dayJson);
 testSchedule(dayJson);
-
-
-
-
