@@ -6,17 +6,76 @@ table, th, td {
   }
   
 button {
-    padding: 3px
+    position: relative;
+    bottom: -5px;
+    font-size: x-large;
+    padding: 3px;
+    padding-left: 10px;
+    padding-right: 10px;
+    border-radius: 5px;
+    border: 1px solid #000000;
+    background-color: cornsilk;
 }  
 
+.disabled {
+    opacity: 1;
+    cursor: not-allowed;
+}
+
 label {
-    padding: 10px
+    padding: 7px;
+}
+
+select {
+    position: relative;
+    bottom: 0px;
+    padding: 8px;
+    font-size: 20px;
+    
+}
+
+option {
+    padding: 8px;
+    text-align: center;
+}
+
+select:disabled {
+    background: #dddddd;
+}
+
+select:disabled+label {
+    color:rgb(94, 94, 94);
+}
+
+select+label {
+    float: left;
 }
 
 input {
-    padding: 3px
+    position: relative;
+    bottom: -5px;
+    padding: 2px;
+    text-align: center;
+    font-size: x-large;
 }
 
 input:disabled {
     background: #dddddd;
+}
+
+input:disabled+label {
+    color: rgb(94, 94, 94);
+}
+
+input[type=text]+label {
+    float: left;
+}
+
+body {
+    font-size: xx-large;
+    background-color: rgb(115, 116, 185);
+}
+
+h1 {
+    text-align: center;
 }

@@ -18,13 +18,16 @@ let remainingShifts = 0;
 function addEmployee() {
   let empName = document.getElementById("empFullNameTxt").value;
   
-  employeeObject[empName] = {
-    datesUnavailable: [],
-    totalShifts: 0
+  if (empName == "" || empName == " ") {
+    alert("Nume Incorect")
+  } else {
+    employeeObject[empName] = {
+      datesUnavailable: [],
+      totalShifts: 0
+    }
+    document.getElementById("empFullNameTxt").value = "";
+    updateEmployeeTable();
   }
-  document.getElementById("empFullNameTxt").value = "";
-  console.log(employeeObject)
-  updateEmployeeTable();
 }
 
 /** Adds the dates for which an employee is unavailable */
@@ -51,6 +54,8 @@ function generateSchedule() {
   computeSchedule(dayJson);
   testSchedule(dayJson);
   showScheduleTable();
+
+  document.getElementById("scheduleTblDiv").style="opacity: 1";
 }
 
 /** Fills employee table with the current employee database. */
@@ -72,15 +77,14 @@ function updateEmployeeTable(){
   })
 
   oldTbody.parentNode.replaceChild(newTbody, oldTbody)
-
 }
 
 /** Fills schedule table with the generated schedule. */
 function showScheduleTable(){
-  let scheduleTable = document.getElementById("scheduleTbl");
-  let headerRow = scheduleTable.insertRow(0);
-  let dayShiftRow = scheduleTable.insertRow(1);
-  let nightShiftRow = scheduleTable.insertRow(1);
+  let scheduleTable = document.getElementById("scheduleTbl").rows;
+  let headerRow = scheduleTable[0];
+  let dayShiftRow = scheduleTable[1];
+  let nightShiftRow = scheduleTable[2];
 
   Object.entries(dayJson).map(ele => {
     let newHeaderCell = headerRow.insertCell(-1);
@@ -103,15 +107,22 @@ function confirmSchedule() {
   let empFullNameTxt = document.getElementById("empFullNameTxt");
   let addEmpNameBtn = document.getElementById("addEmpNameBtn");
   let confirmEmployeesBtn = document.getElementById("confirmEmployeesBtn");
-  
-  dayJson = generateEmptyScheduleJson(getParsedDate(startDate.value), getParsedDate(endDate.value));
-  startDate.disabled = true;
-  endDate.disabled = true;
-  confirmScheduleBtn.disabled = true;
-  editScheduleBtn.disabled = false;
-  empFullNameTxt.disabled = false;
-  addEmpNameBtn.disabled = false;
-  confirmEmployeesBtn.disabled = false;
+
+  if (startDate.value == "" || endDate.value == "") {
+    alert("Completați datele programului.")
+  } else {
+    dayJson = generateEmptyScheduleJson(getParsedDate(startDate.value), getParsedDate(endDate.value));
+    startDate.disabled = true;
+    endDate.disabled = true;
+    confirmScheduleBtn.disabled = true;
+    editScheduleBtn.disabled = false;
+    empFullNameTxt.disabled = false;
+    addEmpNameBtn.disabled = false;
+    confirmEmployeesBtn.disabled = false;
+    document.getElementById("step1").style="background-color: #dddddd";
+    document.getElementById("step2").style="";
+    document.getElementById("employeeTblDiv").style="opacity: 1";
+  }
 }
 
 /** Enables HTML elements for STEP1 */
@@ -126,31 +137,43 @@ function editSchedule() {
   document.getElementById("confirmDatesUnavailableBtn").disabled = true;
   document.getElementById("editEmployeesBtn").disabled = true;
   document.getElementById("editDatesUnavailableBtn").disabled = true;
+  document.getElementById("step1").style="";
+  document.getElementById("step2").style="background-color: #dddddd";
+  document.getElementById("step3").style="background-color: #dddddd";
+  document.getElementById("step4").style="background-color: #dddddd";
+  document.getElementById("employeeTblDiv").style="opacity: 0.5";
 }
 
 /** Disables HTML elements for STEP2 */
 function confirmEmployees() {
-  setEmployeeTotalShifts(dayJson, employeeObject);
+  if (Object.keys(employeeObject) == 0) {
+    alert("Introduceți cel puțin un angajat.")
+  } else {
+    setEmployeeTotalShifts(dayJson, employeeObject);
 
-  let empListSelect = document.getElementById("empListSelect");
-  let empNames = Object.keys(employeeObject);
-  
-  Object.entries(empNames).map( empNameEntry => {
-    let empName = empNameEntry[1]
-    let option = document.createElement("option");
-    option.appendChild(document.createTextNode(empName));
-    empListSelect.appendChild(option);
-  }
+    let empListSelect = document.getElementById("empListSelect");
+    let empNames = Object.keys(employeeObject);
+
+    Object.entries(empNames).map(empNameEntry => {
+      let empName = empNameEntry[1]
+      let option = document.createElement("option");
+      option.appendChild(document.createTextNode(empName));
+      empListSelect.appendChild(option);
+    }
     )
-  
-  document.getElementById("empFullNameTxt").disabled = true;
-  document.getElementById("addEmpNameBtn").disabled = true;
-  document.getElementById("confirmEmployeesBtn").disabled = true;
-  document.getElementById("confirmDatesUnavailableBtn").disabled = false;
-  document.getElementById("editEmployeesBtn").disabled = false;
-  document.getElementById("addEmpDatesUnavailableBtn").disabled = false;
-  document.getElementById("empDateUnavailableTxt").disabled = false;
-  document.getElementById("empListSelect").disabled = false;
+
+    document.getElementById("empFullNameTxt").disabled = true;
+    document.getElementById("addEmpNameBtn").disabled = true;
+    document.getElementById("confirmEmployeesBtn").disabled = true;
+    document.getElementById("confirmDatesUnavailableBtn").disabled = false;
+    document.getElementById("editEmployeesBtn").disabled = false;
+    document.getElementById("addEmpDatesUnavailableBtn").disabled = false;
+    document.getElementById("empDateUnavailableTxt").disabled = false;
+    document.getElementById("empListSelect").disabled = false;
+    document.getElementById("step2").style="background-color: #dddddd";
+    document.getElementById("step3").style="";
+    document.getElementById("employeeTblDiv").style="opacity: 0.5";
+  }
 }
 
 /** Enables HTML elements for STEP2 */
@@ -165,6 +188,11 @@ function editEmployees() {
   document.getElementById("addEmpDatesUnavailableBtn").disabled = true;
   document.getElementById("empDateUnavailableTxt").disabled = true;
   document.getElementById("editDatesUnavailableBtn").disabled = true;
+  document.getElementById("step1").style="background-color: #dddddd";
+  document.getElementById("step2").style="";
+  document.getElementById("step3").style="background-color: #dddddd";
+  document.getElementById("step4").style="background-color: #dddddd";
+  document.getElementById("employeeTblDiv").style="opacity: 1";
 }
 
 function confirmDatesUnavailable() {
@@ -174,13 +202,22 @@ function confirmDatesUnavailable() {
   document.getElementById("empListSelect").disabled = true;
   document.getElementById("editDatesUnavailableBtn").disabled = false;
   document.getElementById("generateScheduleBtn").disabled = false;
+  document.getElementById("step3").style="background-color: #dddddd;";
+  document.getElementById("step4").style="";
+  document.getElementById("employeeTblDiv").style="opacity: 0.5";
 }
 
 function editDatesUnavailable() {
   document.getElementById("addEmpDatesUnavailableBtn").disabled = false;
   document.getElementById("empDateUnavailableTxt").disabled = false;
   document.getElementById("confirmDatesUnavailableBtn").disabled = false;
+  document.getElementById("empListSelect").disabled = false;
   document.getElementById("editDatesUnavailableBtn").disabled = true;
+  document.getElementById("step1").style="background-color: #dddddd";
+  document.getElementById("step2").style="background-color: #dddddd";
+  document.getElementById("step3").style="";
+  document.getElementById("step4").style="background-color: #dddddd";
+  document.getElementById("employeeTblDiv").style="opacity: 0.5";
 }
 
 
@@ -542,6 +579,16 @@ function scheduleNightShiftRemainingDays(newSchedule, workday, prevDay2, prevDay
     } catch (error) {
         handleSchedulingError(error, NIGHT, currentDay[0])
     }
+}
+
+/** Exports the computed schedule into an .xml file. */
+function exportScheduleToExcel(elem) {
+  let table = document.getElementById("scheduleTbl");
+  let html = table.outerHTML;
+  let url = 'data:application/vnd.ms-excel,' + escape(html); // Set your html table into url 
+  elem.setAttribute("href", url);
+  elem.setAttribute("download", "export.xls"); // Choose the file name
+  return false;
 }
 
 /*

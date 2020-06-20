@@ -4,43 +4,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestiune Program Angajati</title>
+    <title>Gestiune Program Angajați</title>
     <link href="schedule.css" type="text/css" rel="stylesheet">
 </head>
 
 <body>
-    <h1> Gestiune Program Angajati </h1>
+    <h1> Gestiune Program Angajați </h1>
     <form>
         <!-- STEP 1: ADD REFERENCE DATES -->
         <div id="step1">
             <div>
-                <label for="dataInceputTxt">Dată Început:</label>
-                <input type="text" id="dataInceputTxt" name="dataInceputTxt" placeholder="15.03.2020">
-                <label for="dataSfarsitTxt">Dată Sfârșit:</label>
-                <input type="text" id="dataSfarsitTxt" name="dataSfarsitTxt" placeholder="30.03.2020">
-                <div style="padding: 10px">
-                    <button type="button" id="confirmScheduleBtn" name="confirmScheduleBtn" onclick="confirmSchedule()">
-                        Confirmă perioadă
-                    </button>
-                    <button type="button" id="editScheduleBtn" name="editScheduleBtn" disabled="true"
-                        onclick="editSchedule()">
-                        Modifică perioadă
-                    </button>
+                <div style="float: left;">
+                    <input type="text" id="dataInceputTxt" name="dataInceputTxt" placeholder="15.03.2020">
+                    <label for="dataInceputTxt">Dată Început:</label>
+                </div>
+                <div style="float: left;">
+                    <input type="text" id="dataSfarsitTxt" name="dataSfarsitTxt" placeholder="30.03.2020">
+                    <label for="dataSfarsitTxt">Dată Sfârșit:</label>
                 </div>
             </div>
-            <hr>
+            <br>
+            <div style="padding: 10px; padding-top: 15px">
+                <button type="button" id="confirmScheduleBtn" name="confirmScheduleBtn" onclick="confirmSchedule()">
+                    Confirm
+                </button>
+                <button type="button" id="editScheduleBtn" name="editScheduleBtn" disabled="true"
+                    onclick="editSchedule()">
+                    Modific
+                </button>
+            </div>
         </div>
+        <hr>
         <!-- STEP 2: ADD EMPLOYEES -->
-        <div id="step2">
+        <div id="step2" style="background-color: #dddddd">
             <div>
-                <label for="empFullName">Nume Angajat:</label>
                 <input type="text" id="empFullNameTxt" name="empFullNameTxt" disabled="true">
+                <label for="empFullName">Nume Angajat:</label>
                 <button type="button" id="addEmpNameBtn" name="addEmpNameBtn" disabled="true" onclick="addEmployee()">
                     Adaugă Angajat
                 </button>
             </div>
-            <div style="padding: 10px;" align="center">
-                <table id="employeeTbl" name="employeeTbl">
+            <div id="employeeTblDiv" style="padding: 10px; opacity: 0.5;" align="center">
+                <table id="employeeTbl" name="employeeTbl" style="background-color: #f1f369">
                     <thead>
                         <tr>
                             <th>Nume Angajat</th>
@@ -55,53 +60,68 @@
             <div style="padding: 10px">
                 <button type="button" id="confirmEmployeesBtn" name="confirmEmployeesBtn" disabled="true"
                     onclick="confirmEmployees()">
-                    Confirmă Angajați
+                    Confirm
                 </button>
                 <button type="button" id="editEmployeesBtn" name="editEmployeesBtn" disabled="true"
                     onclick="editEmployees()">
-                    Modifică Angajați
+                    Modific
                 </button>
             </div>
         </div>
         <hr>
         <!-- STEP 3: ADD ABSENCES -->
-        <div id="step3">
+        <div id="step3" style="background-color: #dddddd">
             <div style="padding: 3px;">
-                <label for="empListSelect">Alege Angajat:</label>
                 <select id="empListSelect" name="empListSelect" disabled="true"></select>
+                <label for="empListSelect">Alege Angajat:</label>
             </div>
+            <br>
             <div style="padding: 3px;">
+                <input type="text" id="empDateUnavailableTxt" name="empDateUnavailableTxt" disabled="true"
+                    placeholder="ex: 14.07.2020, 15.07.2020">
                 <label for="empDateUnavailableTxt">Date Absențe:</label>
-                <input type="text" id="empDateUnavailableTxt" name="empDateUnavailableTxt" disabled="true">
                 <button type="button" id="addEmpDatesUnavailableBtn" name="addEmpDatesUnavailableBtn" disabled="true"
-                    style="float: center;"
-                    onclick="addDatesUnavailable()">
+                    style="float: center;" onclick="addDatesUnavailable()">
                     Adaugă Absențe
                 </button>
-            <div style="padding: 10px">
-                <button type="button" id="confirmDatesUnavailableBtn" name="confirmDatesUnavailableBtn" disabled="true"
-                    onclick="confirmDatesUnavailable()">
-                    Confirmă Absențe
-                </button>
-                <button type="button" id="editDatesUnavailableBtn" name="editDatesUnavailableBtn" disabled="true"
-                    onclick="editDatesUnavailable()">
-                    Modifică Absențe
-                </button>
-            </div>
-            <hr>
-            <!-- STEP 4: GENERATE SCHEDULE -->
-            <div id="step4">
-                <div style="padding: 10px;">
-                    <button type="button" id="generateScheduleBtn" name="generateScheduleBtn" disabled="true"
-                        onclick="generateSchedule()">
-                        Generează Program
+                <div style="padding: 10px; padding-top: 15px;">
+                    <button type="button" id="confirmDatesUnavailableBtn" name="confirmDatesUnavailableBtn"
+                        disabled="true" onclick="confirmDatesUnavailable()">
+                        Confirm
+                    </button>
+                    <button type="button" id="editDatesUnavailableBtn" name="editDatesUnavailableBtn" disabled="true"
+                        onclick="editDatesUnavailable()">
+                        Modific
                     </button>
                 </div>
-                <div>
-                    <table id="scheduleTbl" name="scheduleTbl" style="padding:3px">
-                </div>
             </div>
+        </div>
+        <hr>
+        <!-- STEP 4: GENERATE SCHEDULE -->
+        <div id="step4" style="background-color: #dddddd">
+            <div style="padding: 10px;">
+                <button type="button" id="generateScheduleBtn" name="generateScheduleBtn" disabled="true"
+                    onclick="generateSchedule()">
+                    Generează Program
+                </button>
+            </div>
+            <div id="scheduleTblDiv" style="padding-top: 15px; opacity: 0;">
+                <table id="scheduleTbl" name="scheduleTbl" style="padding:3px; background-color: #f1f369">
+                    <tr>
+                        <td>Data</td>
+                    </tr>
+                    <tr>
+                        <td>Zi</td>
+                    </tr>
+                    <tr>
+                        <td>Noapte</td>
+                    </tr>
+                </table>
+                <a id="downloadLink" onclick="exportScheduleToExcel(this)">Export Excel</a>
+            </div>
+        </div>
     </form>
+
     <script src="schedule.js"></script>
 </body>
 
