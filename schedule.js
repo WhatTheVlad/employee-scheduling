@@ -10,6 +10,65 @@ let minimumShifts = 0;
 let remainingShifts = 0;
 
 /*
+    HTML FUNCTIONS
+*/
+
+/** Adds an employee element to the employeeObject */
+//TODO: add check for empty string
+function addEmployee() {
+  let empName = document.getElementById("empFullNameTxt").value;
+  
+  employeeObject[empName] = {
+    datesUnavailable: [],
+    totalShifts: 0
+  }
+  document.getElementById("empFullNameTxt").value = "";
+  console.log(employeeObject)
+}
+
+/** Adds the dates for which an employee is unavailable */
+//TODO: add check for empty string
+function addDatesUnavailable() {
+  let empName = document.getElementById("empFullNameTxt").value;
+  let newDateUnavailable = document.getElementById("empDateUnavailableTxt").value;
+  let currentDatesUnavailable = employeeObject[empName]['datesUnavailable'];
+
+  currentDatesUnavailable.push(newDateUnavailable);
+  // Object.entries(datesUnavailable).map(date => {
+  //   currentDatesUnavailable.push(date[1]);
+  // });
+  console.log(employeeObject)
+}
+
+/** Generates the schedule with the available user data. */
+function generateSchedule() {
+  generateScheduleJson('2020/01/01', '2020/01/29');
+  setEmployeeVariables(dayJson, employeeObject);
+  computeSchedule(dayJson);
+  testSchedule(dayJson);
+}
+
+/** Fills main table with the generated schedule. */
+function showTable(){
+  let scheduleTable = document.getElementById("scheduleTableTbl");
+  let headerRow = scheduleTable.insertRow(0);
+  let dayShiftRow = scheduleTable.insertRow(1);
+  let nightShiftRow = scheduleTable.insertRow(1);
+
+
+  Object.entries(dayJson).map(ele => {
+    let newHeaderCell = headerRow.insertCell(-1);
+    let dayShiftCell = dayShiftRow.insertCell(-1);
+    let nightShiftCell = nightShiftRow.insertCell(-1);
+
+    newHeaderCell.innerHTML = ele[0];
+    dayShiftCell.innerHTML = ele[1]['day'];
+    nightShiftCell.innerHTML = ele[1]['night']
+    
+  })
+}
+
+/*
     UTIL FUNCTIONS
 */
 
@@ -359,33 +418,6 @@ function scheduleNightShiftRemainingDays(newSchedule, workday, prevDay2, prevDay
     }
 }
 
-/** Adds an employee element to the employeeObject */
-//TODO: add check for empty string
-function addEmployee() {
-  let empName = document.getElementById("empFullNameTxt").value;
-  
-  employeeObject[empName] = {
-    datesUnavailable: [],
-    totalShifts: 0
-  }
-  document.getElementById("empFullNameTxt").value = "";
-  console.log(employeeObject)
-}
-
-/** Adds the dates for which an employee is unavailable */
-//TODO: add check for empty string
-function addDatesUnavailable() {
-  let empName = document.getElementById("empFullNameTxt").value;
-  let newDateUnavailable = document.getElementById("empDateUnavailableTxt").value;
-  let currentDatesUnavailable = employeeObject[empName]['datesUnavailable'];
-
-  currentDatesUnavailable.push(newDateUnavailable);
-  // Object.entries(datesUnavailable).map(date => {
-  //   currentDatesUnavailable.push(date[1]);
-  // });
-  console.log(employeeObject)
-}
-
 /*
     ERROR HANDLING FUNCTIONS
 */
@@ -509,9 +541,3 @@ function testSchedule(testSchedule) {
 // computeSchedule(dayJson);
 // testSchedule(dayJson);
 
-function generateSchedule() {
-generateScheduleJson('2020/01/01','2020/01/29');
-setEmployeeVariables(dayJson, employeeObject);
-computeSchedule(dayJson);
-testSchedule(dayJson);
-}
