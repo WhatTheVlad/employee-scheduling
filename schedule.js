@@ -46,6 +46,7 @@ function generateSchedule() {
   setEmployeeVariables(dayJson, employeeObject);
   computeSchedule(dayJson);
   testSchedule(dayJson);
+  showScheduleTable();
 }
 
 /** Fills employee table with the current employee database. */
@@ -90,11 +91,11 @@ function showScheduleTable(){
 }
 
 /** Disables HTML elements for STEP1 */
-function confirmDates() {
+function confirmSchedule() {
   let startDate = document.getElementById("dataInceputTxt");
   let endDate = document.getElementById("dataSfarsitTxt");
-  let confirmDatesBtn = document.getElementById("confirmDatesBtn");
-  let editDatesBtn = document.getElementById("editDatesBtn");
+  let confirmScheduleBtn = document.getElementById("confirmScheduleBtn");
+  let editScheduleBtn = document.getElementById("editScheduleBtn");
   let empFullNameTxt = document.getElementById("empFullNameTxt");
   let addEmpNameBtn = document.getElementById("addEmpNameBtn");
   let confirmEmployeesBtn = document.getElementById("confirmEmployeesBtn");
@@ -102,22 +103,25 @@ function confirmDates() {
   dayJson = generateEmptyScheduleJson(getParsedDate(startDate.value), getParsedDate(endDate.value));
   startDate.disabled = true;
   endDate.disabled = true;
-  confirmDatesBtn.disabled = true;
-  editDatesBtn.disabled = false;
+  confirmScheduleBtn.disabled = true;
+  editScheduleBtn.disabled = false;
   empFullNameTxt.disabled = false;
   addEmpNameBtn.disabled = false;
   confirmEmployeesBtn.disabled = false;
 }
 
 /** Enables HTML elements for STEP1 */
-function editDates() {
+function editSchedule() {
   document.getElementById("dataInceputTxt").disabled = false;
   document.getElementById("dataSfarsitTxt").disabled = false;
-  document.getElementById("confirmDatesBtn").disabled = false;
+  document.getElementById("confirmScheduleBtn").disabled = false;
   document.getElementById("empFullNameTxt").disabled = true;
   document.getElementById("addEmpNameBtn").disabled = true;
-  document.getElementById("editDatesBtn").disabled = true;
+  document.getElementById("editScheduleBtn").disabled = true;
   document.getElementById("confirmEmployeesBtn").disabled = true;
+  document.getElementById("confirmDatesUnavailableBtn").disabled = true;
+  document.getElementById("editEmployeesBtn").disabled = true;
+  document.getElementById("editDatesUnavailableBtn").disabled = true;
 }
 
 /** Disables HTML elements for STEP2 */
@@ -125,12 +129,39 @@ function confirmEmployees() {
   document.getElementById("empFullNameTxt").disabled = true;
   document.getElementById("addEmpNameBtn").disabled = true;
   document.getElementById("confirmEmployeesBtn").disabled = true;
+  document.getElementById("confirmDatesUnavailableBtn").disabled = false;
   document.getElementById("editEmployeesBtn").disabled = false;
+  document.getElementById("addEmpDatesUnavailableBtn").disabled = false;
+  document.getElementById("empDateUnavailableTxt").disabled = false;
 }
 
 /** Enables HTML elements for STEP2 */
 function editEmployees() {
+  document.getElementById("empFullNameTxt").disabled = false;
+  document.getElementById("addEmpNameBtn").disabled = false;
+  document.getElementById("confirmEmployeesBtn").disabled = false;
+  document.getElementById("editEmployeesBtn").disabled = true;
+  document.getElementById("confirmDatesUnavailableBtn").disabled = true;
+  document.getElementById("confirmScheduleBtn").disabled = true;
+  document.getElementById("editEmployeesBtn").disabled = true;
+  document.getElementById("addEmpDatesUnavailableBtn").disabled = true;
+  document.getElementById("empDateUnavailableTxt").disabled = true;
+  document.getElementById("editDatesUnavailableBtn").disabled = true;
+}
 
+function confirmDatesUnavailable() {
+  document.getElementById("addEmpDatesUnavailableBtn").disabled = true;
+  document.getElementById("empDateUnavailableTxt").disabled = true;
+  document.getElementById("confirmDatesUnavailableBtn").disabled = true;
+  document.getElementById("editDatesUnavailableBtn").disabled = false;
+  document.getElementById("generateScheduleBtn").disabled = false;
+}
+
+function editDatesUnavailable() {
+  document.getElementById("addEmpDatesUnavailableBtn").disabled = false;
+  document.getElementById("empDateUnavailableTxt").disabled = false;
+  document.getElementById("confirmDatesUnavailableBtn").disabled = false;
+  document.getElementById("editDatesUnavailableBtn").disabled = true;
 }
 
 
