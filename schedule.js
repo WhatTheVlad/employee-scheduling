@@ -77,7 +77,6 @@ function showScheduleTable(){
   let dayShiftRow = scheduleTable.insertRow(1);
   let nightShiftRow = scheduleTable.insertRow(1);
 
-
   Object.entries(dayJson).map(ele => {
     let newHeaderCell = headerRow.insertCell(-1);
     let dayShiftCell = dayShiftRow.insertCell(-1);
@@ -96,12 +95,18 @@ function confirmDates() {
   let endDate = document.getElementById("dataSfarsitTxt");
   let confirmDatesBtn = document.getElementById("confirmDatesBtn");
   let editDatesBtn = document.getElementById("editDatesBtn");
-
+  let empFullNameTxt = document.getElementById("empFullNameTxt");
+  let addEmpNameBtn = document.getElementById("addEmpNameBtn");
+  let confirmEmployeesBtn = document.getElementById("confirmEmployeesBtn");
+  
   dayJson = generateEmptyScheduleJson(getParsedDate(startDate.value), getParsedDate(endDate.value));
   startDate.disabled = true;
   endDate.disabled = true;
   confirmDatesBtn.disabled = true;
   editDatesBtn.disabled = false;
+  empFullNameTxt.disabled = false;
+  addEmpNameBtn.disabled = false;
+  confirmEmployeesBtn.disabled = false;
 }
 
 /** Enables HTML elements for STEP1 */
@@ -109,7 +114,23 @@ function editDates() {
   document.getElementById("dataInceputTxt").disabled = false;
   document.getElementById("dataSfarsitTxt").disabled = false;
   document.getElementById("confirmDatesBtn").disabled = false;
+  document.getElementById("empFullNameTxt").disabled = true;
+  document.getElementById("addEmpNameBtn").disabled = true;
   document.getElementById("editDatesBtn").disabled = true;
+  document.getElementById("confirmEmployeesBtn").disabled = true;
+}
+
+/** Disables HTML elements for STEP2 */
+function confirmEmployees() {
+  document.getElementById("empFullNameTxt").disabled = true;
+  document.getElementById("addEmpNameBtn").disabled = true;
+  document.getElementById("confirmEmployeesBtn").disabled = true;
+  document.getElementById("editEmployeesBtn").disabled = false;
+}
+
+/** Enables HTML elements for STEP2 */
+function editEmployees() {
+
 }
 
 

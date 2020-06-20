@@ -19,13 +19,10 @@
                 <label for="dataSfarsitTxt">Data Sfarsit:</label>
                 <input type="text" id="dataSfarsitTxt" name="dataSfarsitTxt" placeholder="2020/06/25">
                 <div style="padding: 10px">
-                    <button type="button" id="confirmDatesBtn" name="confirmDatesBtn"
-                        onclick="confirmDates()">
+                    <button type="button" id="confirmDatesBtn" name="confirmDatesBtn" onclick="confirmDates()">
                         Confirma perioada
                     </button>
-                    <button type="button" id="editDatesBtn" name="editDatesBtn"
-                        disabled="true"
-                        onclick="editDates()">
+                    <button type="button" id="editDatesBtn" name="editDatesBtn" disabled="true" onclick="editDates()">
                         Modifica perioada
                     </button>
                 </div>
@@ -33,33 +30,42 @@
             <hr>
         </div>
         <!-- STEP 2: ADD EMPLOYEES -->
-        <div>
-            <label for="empFullName">Nume Angajat:</label>
-            <input type="text" id="empFullNameTxt" name="empFullNameTxt">
-            <button type="button" id="addEmpNameBtn" name="addEmpNameBtn" onclick="addEmployee()">
-                Adauga Angajat
-            </button>
-        </div>
-        <div>
-            <table id="employeeTbl" name="employeeTbl">
-                <thead>
-                    <tr>
-                        <th>Nume Angajat</th>
-                        <th>Total Ture</th>
-                        <th>Absente</th>
-                    </tr>
-                </thead>
-                <tbody>
-
-                </tbody>
-            </table>
+        <div id="step2">
+            <div>
+                <label for="empFullName">Nume Angajat:</label>
+                <input type="text" id="empFullNameTxt" name="empFullNameTxt" disabled="true">
+                <button type="button" id="addEmpNameBtn" name="addEmpNameBtn" disabled="true" onclick="addEmployee()">
+                    Adauga Angajat
+                </button>
+            </div>
+            <div style="padding: 10px;" align="center">
+                <table id="employeeTbl" name="employeeTbl">
+                    <thead>
+                        <tr>
+                            <th>Nume Angajat</th>
+                            <th>Total Ture</th>
+                            <th>Absente</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+            <div style="padding: 10px">
+                <button type="button" id="confirmEmployeesBtn" name="confirmEmployeesBtn"  disabled="true" onclick="confirmEmployees()">
+                    Confirma Angajati
+                </button>
+                <button type="button" id="editEmployeesBtn" name="editEmployeesBtn" disabled="true" onclick="editEmployees()">
+                    Modifica Angajati
+                </button>
+            </div>
         </div>
         <hr>
         <!-- STEP 3: ADD ABSENCES -->
         <div>
             <label for="empDateUnavailableTxt">Data Absenta:</label>
-            <input type="text" id="empDateUnavailableTxt" name="empDateUnavailableTxt">
-            <button type="button" id="addEmpDatesUnavailableBtn" name="addEmpDatesUnavailableBtn"
+            <input type="text" id="empDateUnavailableTxt" name="empDateUnavailableTxt" disabled="true">
+            <button type="button" id="addEmpDatesUnavailableBtn" name="addEmpDatesUnavailableBtn" disabled="true"
                 onclick="addDatesUnavailable()">
                 Adauga Absenta
             </button>
@@ -67,13 +73,15 @@
         <hr>
         <!-- STEP 4: GENERATE SCHEDULE -->
         <div>
-            <button type="button" id="generateScheduleBtn" name="generateScheduleBtn" onclick="generateSchedule()">
+            <button type="button" id="generateScheduleBtn" name="generateScheduleBtn" disabled="true"
+                onclick="generateSchedule()">
                 Genereaza Program Ture
             </button>
         </div>
         <hr>
         <div>
-            <button type="button" id="showScheduleTableBtn" name="showScheduleTableBtn" onclick="showScheduleTable()">
+            <button type="button" id="showScheduleTableBtn" name="showScheduleTableBtn" disabled="true"
+                onclick="showScheduleTable()">
                 Afiseaza Tabel
             </button>
         </div>

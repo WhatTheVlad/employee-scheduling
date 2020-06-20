@@ -14,3 +14,7 @@ label {
 input {
     padding: 3px
 }
+
+input:disabled {
+    background: #dddddd;
+  }
