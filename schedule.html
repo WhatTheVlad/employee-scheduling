@@ -14,17 +14,17 @@
         <!-- STEP 1: ADD REFERENCE DATES -->
         <div id="step1">
             <div>
-                <label for="dataInceputTxt">Data Inceput:</label>
-                <input type="text" id="dataInceputTxt" name="dataInceputTxt" placeholder="2020/06/15">
-                <label for="dataSfarsitTxt">Data Sfarsit:</label>
-                <input type="text" id="dataSfarsitTxt" name="dataSfarsitTxt" placeholder="2020/06/25">
+                <label for="dataInceputTxt">Dată Început:</label>
+                <input type="text" id="dataInceputTxt" name="dataInceputTxt" placeholder="15.03.2020">
+                <label for="dataSfarsitTxt">Dată Sfârșit:</label>
+                <input type="text" id="dataSfarsitTxt" name="dataSfarsitTxt" placeholder="30.03.2020">
                 <div style="padding: 10px">
                     <button type="button" id="confirmScheduleBtn" name="confirmScheduleBtn" onclick="confirmSchedule()">
-                        Confirma perioada
+                        Confirmă perioadă
                     </button>
                     <button type="button" id="editScheduleBtn" name="editScheduleBtn" disabled="true"
                         onclick="editSchedule()">
-                        Modifica perioada
+                        Modifică perioadă
                     </button>
                 </div>
             </div>
@@ -36,7 +36,7 @@
                 <label for="empFullName">Nume Angajat:</label>
                 <input type="text" id="empFullNameTxt" name="empFullNameTxt" disabled="true">
                 <button type="button" id="addEmpNameBtn" name="addEmpNameBtn" disabled="true" onclick="addEmployee()">
-                    Adauga Angajat
+                    Adaugă Angajat
                 </button>
             </div>
             <div style="padding: 10px;" align="center">
@@ -45,7 +45,7 @@
                         <tr>
                             <th>Nume Angajat</th>
                             <th>Total Ture</th>
-                            <th>Absente</th>
+                            <th>Absențe</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -55,11 +55,11 @@
             <div style="padding: 10px">
                 <button type="button" id="confirmEmployeesBtn" name="confirmEmployeesBtn" disabled="true"
                     onclick="confirmEmployees()">
-                    Confirma Angajati
+                    Confirmă Angajați
                 </button>
                 <button type="button" id="editEmployeesBtn" name="editEmployeesBtn" disabled="true"
                     onclick="editEmployees()">
-                    Modifica Angajati
+                    Modifică Angajați
                 </button>
             </div>
         </div>
@@ -71,21 +71,21 @@
                 <select id="empListSelect" name="empListSelect" disabled="true"></select>
             </div>
             <div style="padding: 3px;">
-                <label for="empDateUnavailableTxt">Data Absenta:</label>
+                <label for="empDateUnavailableTxt">Date Absențe:</label>
                 <input type="text" id="empDateUnavailableTxt" name="empDateUnavailableTxt" disabled="true">
                 <button type="button" id="addEmpDatesUnavailableBtn" name="addEmpDatesUnavailableBtn" disabled="true"
                     style="float: center;"
                     onclick="addDatesUnavailable()">
-                    Adauga Absente
+                    Adaugă Absențe
                 </button>
             <div style="padding: 10px">
                 <button type="button" id="confirmDatesUnavailableBtn" name="confirmDatesUnavailableBtn" disabled="true"
                     onclick="confirmDatesUnavailable()">
-                    Confirma Absente
+                    Confirmă Absențe
                 </button>
                 <button type="button" id="editDatesUnavailableBtn" name="editDatesUnavailableBtn" disabled="true"
                     onclick="editDatesUnavailable()">
-                    Modifica Absente
+                    Modifică Absențe
                 </button>
             </div>
             <hr>
@@ -94,7 +94,7 @@
                 <div style="padding: 10px;">
                     <button type="button" id="generateScheduleBtn" name="generateScheduleBtn" disabled="true"
                         onclick="generateSchedule()">
-                        Genereaza Program
+                        Generează Program
                     </button>
                 </div>
                 <div>

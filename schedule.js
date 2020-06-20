@@ -31,19 +31,23 @@ function addEmployee() {
 //TODO: add check for empty string
 function addDatesUnavailable() {
   let empName = document.getElementById("empListSelect").value;
-  let newDateUnavailable = document.getElementById("empDateUnavailableTxt").value;
+  let newDateUnavailable = document.getElementById("empDateUnavailableTxt").value.split(',');
   let currentDatesUnavailable = employeeObject[empName]['datesUnavailable'];
 
-  currentDatesUnavailable.push(newDateUnavailable);
-  // Object.entries(datesUnavailable).map(date => {
-  //   currentDatesUnavailable.push(date[1]);
-  // });
+  newDateUnavailable.forEach(date => {
+    if (!currentDatesUnavailable.includes(date)) {
+      currentDatesUnavailable.push(date);
+    } else {
+      alert('Data ' + date + ' este deja înregistrată pentru ' + empName)
+    }
+  })
+
   updateEmployeeTable();
 }
 
 /** Generates the schedule with the available user data. */
 function generateSchedule() {
-  setEmployeeVariables(dayJson, employeeObject);
+  sortEmployeesByNumerOfShifts(employeeObject);
   computeSchedule(dayJson);
   testSchedule(dayJson);
   showScheduleTable();
@@ -126,6 +130,8 @@ function editSchedule() {
 
 /** Disables HTML elements for STEP2 */
 function confirmEmployees() {
+  setEmployeeTotalShifts(dayJson, employeeObject);
+
   let empListSelect = document.getElementById("empListSelect");
   let empNames = Object.keys(employeeObject);
   
@@ -165,6 +171,7 @@ function confirmDatesUnavailable() {
   document.getElementById("addEmpDatesUnavailableBtn").disabled = true;
   document.getElementById("empDateUnavailableTxt").disabled = true;
   document.getElementById("confirmDatesUnavailableBtn").disabled = true;
+  document.getElementById("empListSelect").disabled = true;
   document.getElementById("editDatesUnavailableBtn").disabled = false;
   document.getElementById("generateScheduleBtn").disabled = false;
 }
@@ -229,12 +236,6 @@ function checkNightShiftAvailability(employee, currentDay, prevDay, prevDay2) {
   } else {
     return false;
   }
-}
-
-/** Sets required employee-related variables. */
-function setEmployeeVariables(dayJson, employeeObject) {
-  setEmployeeTotalShifts(dayJson, employeeObject);
-  sortEmployeesByNumerOfShifts(employeeObject);
 }
 
 /** Sets the total number of shifts each employee must work, according to the requested timeline. */
@@ -647,21 +648,3 @@ function testSchedule(testSchedule) {
   //console.log(dayShifts)
   //console.log(nightShifts)
 }
-
-/*
-    EXECUTION
-*/
-
-
-// addEmployee('Vlad Mocanu');
-// addEmployee('Stefana Donighian');
-// addEmployee('Alexandru Aghiniei');
-// addEmployee('Cristian Zaharia');
-// addEmployee('Bogdan Ghirvu');
-// addDatesUnavailable('Vlad Mocanu', ['01.01.2020', '02.01.2020', '03.01.2020'])
-// addDatesUnavailable('Stefana Donighian', ['01.01.2020', '05.01.2020', '13.01.2020'])
-// addDatesUnavailable('Bogdan Ghirvu', ['12.01.2020', '02.01.2020', '14.01.2020'])
-// generateScheduleJson('2020/01/01','2020/01/29');
-// setEmployeeVariables(dayJson, employeeObject);
-// computeSchedule(dayJson);
-// testSchedule(dayJson);
