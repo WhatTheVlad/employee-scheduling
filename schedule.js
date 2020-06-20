@@ -30,7 +30,7 @@ function addEmployee() {
 /** Adds the dates for which an employee is unavailable */
 //TODO: add check for empty string
 function addDatesUnavailable() {
-  let empName = document.getElementById("empFullNameTxt").value;
+  let empName = document.getElementById("empListSelect").value;
   let newDateUnavailable = document.getElementById("empDateUnavailableTxt").value;
   let currentDatesUnavailable = employeeObject[empName]['datesUnavailable'];
 
@@ -126,6 +126,17 @@ function editSchedule() {
 
 /** Disables HTML elements for STEP2 */
 function confirmEmployees() {
+  let empListSelect = document.getElementById("empListSelect");
+  let empNames = Object.keys(employeeObject);
+  
+  Object.entries(empNames).map( empNameEntry => {
+    let empName = empNameEntry[1]
+    let option = document.createElement("option");
+    option.appendChild(document.createTextNode(empName));
+    empListSelect.appendChild(option);
+  }
+    )
+  
   document.getElementById("empFullNameTxt").disabled = true;
   document.getElementById("addEmpNameBtn").disabled = true;
   document.getElementById("confirmEmployeesBtn").disabled = true;
@@ -133,6 +144,7 @@ function confirmEmployees() {
   document.getElementById("editEmployeesBtn").disabled = false;
   document.getElementById("addEmpDatesUnavailableBtn").disabled = false;
   document.getElementById("empDateUnavailableTxt").disabled = false;
+  document.getElementById("empListSelect").disabled = false;
 }
 
 /** Enables HTML elements for STEP2 */

@@ -4,12 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Scheduling App 1.0</title>
+    <title>Gestiune Program Angajati</title>
     <link href="schedule.css" type="text/css" rel="stylesheet">
 </head>
 
 <body>
-    <h1> Employee Scheduling App </h1>
+    <h1> Gestiune Program Angajati </h1>
     <form>
         <!-- STEP 1: ADD REFERENCE DATES -->
         <div id="step1">
@@ -66,12 +66,18 @@
         <hr>
         <!-- STEP 3: ADD ABSENCES -->
         <div id="step3">
-            <label for="empDateUnavailableTxt">Data Absenta:</label>
-            <input type="text" id="empDateUnavailableTxt" name="empDateUnavailableTxt" disabled="true">
-            <button type="button" id="addEmpDatesUnavailableBtn" name="addEmpDatesUnavailableBtn" disabled="true"
-                onclick="addDatesUnavailable()">
-                Adauga Absenta
-            </button>
+            <div style="padding: 3px;">
+                <label for="empListSelect">Alege Angajat:</label>
+                <select id="empListSelect" name="empListSelect" disabled="true"></select>
+            </div>
+            <div style="padding: 3px;">
+                <label for="empDateUnavailableTxt">Data Absenta:</label>
+                <input type="text" id="empDateUnavailableTxt" name="empDateUnavailableTxt" disabled="true">
+                <button type="button" id="addEmpDatesUnavailableBtn" name="addEmpDatesUnavailableBtn" disabled="true"
+                    style="float: center;"
+                    onclick="addDatesUnavailable()">
+                    Adauga Absente
+                </button>
             <div style="padding: 10px">
                 <button type="button" id="confirmDatesUnavailableBtn" name="confirmDatesUnavailableBtn" disabled="true"
                     onclick="confirmDatesUnavailable()">
@@ -82,20 +88,19 @@
                     Modifica Absente
                 </button>
             </div>
-        </div>
-        <hr>
-        <!-- STEP 4: GENERATE SCHEDULE -->
-        <div id="step4">
-            <div style="padding: 10px;">
-                <button type="button" id="generateScheduleBtn" name="generateScheduleBtn" disabled="true"
-                    onclick="generateSchedule()">
-                    Genereaza Program Ture
-                </button>
+            <hr>
+            <!-- STEP 4: GENERATE SCHEDULE -->
+            <div id="step4">
+                <div style="padding: 10px;">
+                    <button type="button" id="generateScheduleBtn" name="generateScheduleBtn" disabled="true"
+                        onclick="generateSchedule()">
+                        Genereaza Program
+                    </button>
+                </div>
+                <div>
+                    <table id="scheduleTbl" name="scheduleTbl" style="padding:3px">
+                </div>
             </div>
-            <div>
-                <table id="scheduleTbl" name="scheduleTbl" style="padding:3px">
-            </div>
-        </div>
     </form>
     <script src="schedule.js"></script>
 </body>
