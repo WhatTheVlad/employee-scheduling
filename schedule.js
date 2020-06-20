@@ -3,7 +3,7 @@
 */
 const DAY = "day";
 const NIGHT = "night";
-const dayJson = {};
+let dayJson = {};
 const employeeObject = {};
 let empNameAndShiftSorted = new Map();
 let minimumShifts = 0;
@@ -24,6 +24,7 @@ function addEmployee() {
   }
   document.getElementById("empFullNameTxt").value = "";
   console.log(employeeObject)
+  updateEmployeeTable();
 }
 
 /** Adds the dates for which an employee is unavailable */
@@ -37,20 +38,41 @@ function addDatesUnavailable() {
   // Object.entries(datesUnavailable).map(date => {
   //   currentDatesUnavailable.push(date[1]);
   // });
-  console.log(employeeObject)
+  updateEmployeeTable();
 }
 
 /** Generates the schedule with the available user data. */
 function generateSchedule() {
-  generateScheduleJson('2020/01/01', '2020/01/29');
   setEmployeeVariables(dayJson, employeeObject);
   computeSchedule(dayJson);
   testSchedule(dayJson);
 }
 
-/** Fills main table with the generated schedule. */
-function showTable(){
-  let scheduleTable = document.getElementById("scheduleTableTbl");
+/** Fills employee table with the current employee database. */
+function updateEmployeeTable(){
+  let empTable = document.getElementById("employeeTbl");
+  let oldTbody = empTable.tBodies[0];
+  let newTbody = document.createElement('tbody');
+
+  Object.entries(employeeObject).map(ele => {
+    let newRow = newTbody.insertRow(-1);
+    let empNameCell = newRow.insertCell(-1);
+    let empTotalShiftsCell = newRow.insertCell(-1);
+    let empDatesUnavailableCell = newRow.insertCell(-1);
+
+    empNameCell.innerHTML = ele[0];
+    empDatesUnavailableCell.innerHTML = ele[1]['datesUnavailable'];
+    empTotalShiftsCell.innerHTML = ele[1]['totalShifts']
+    
+  })
+
+  oldTbody.parentNode.replaceChild(newTbody, oldTbody)
+
+}
+
+/** Fills schedule table with the generated schedule. */
+function showScheduleTable(){
+  let scheduleTable = document.getElementById("scheduleTbl");
   let headerRow = scheduleTable.insertRow(0);
   let dayShiftRow = scheduleTable.insertRow(1);
   let nightShiftRow = scheduleTable.insertRow(1);
@@ -67,6 +89,29 @@ function showTable(){
     
   })
 }
+
+/** Disables HTML elements for STEP1 */
+function confirmDates() {
+  let startDate = document.getElementById("dataInceputTxt");
+  let endDate = document.getElementById("dataSfarsitTxt");
+  let confirmDatesBtn = document.getElementById("confirmDatesBtn");
+  let editDatesBtn = document.getElementById("editDatesBtn");
+
+  dayJson = generateEmptyScheduleJson(getParsedDate(startDate.value), getParsedDate(endDate.value));
+  startDate.disabled = true;
+  endDate.disabled = true;
+  confirmDatesBtn.disabled = true;
+  editDatesBtn.disabled = false;
+}
+
+/** Enables HTML elements for STEP1 */
+function editDates() {
+  document.getElementById("dataInceputTxt").disabled = false;
+  document.getElementById("dataSfarsitTxt").disabled = false;
+  document.getElementById("confirmDatesBtn").disabled = false;
+  document.getElementById("editDatesBtn").disabled = true;
+}
+
 
 /*
     UTIL FUNCTIONS
@@ -137,6 +182,7 @@ function setEmployeeTotalShifts(dayJson, employeeObject) {
 
     setEmployeeMinimumShifts(employeeObject, minimumShifts);
     setEmployeeRemainingShifts(employeeObject, remainingShifts);
+    updateEmployeeTable();
 }
 
 /** Sets the minimum number of shifts an employee must work, according to the requested timeline. */
@@ -294,15 +340,30 @@ function getFormattedDate(date) {
   return day + "." + month + "." + year;
 }
 
+/** Returns the date in the format */
+function getParsedDate(date) {
+  let stringDate = date.toString();
+  let splitDate = stringDate.split('.');
+  let day = splitDate[0];
+  let month = splitDate[1];
+  let year = splitDate[2];
+
+  return year + '/' + month + '/' + day
+}
+
 /** Generates a JSON object with day and night shifts between two given dates */
-function generateScheduleJson(startDate, endDate) {
+function generateEmptyScheduleJson(startDate, endDate) {
   const dateArray = getDates(new Date(startDate), new Date(endDate));
+
+  let emptyJ = {}
 
   dateArray.forEach(date => {
     let formattedDate = getFormattedDate(date);
-    dayJson[formattedDate] = { day: '', night: '' };
+    emptyJ[formattedDate] = { day: '', night: '' };
   })
-  //console.log(dayJson);
+  
+  return emptyJ;
+
 }
 
 /** Returns  true if the employee is available and false if the employee 
@@ -540,4 +601,3 @@ function testSchedule(testSchedule) {
 // setEmployeeVariables(dayJson, employeeObject);
 // computeSchedule(dayJson);
 // testSchedule(dayJson);
-

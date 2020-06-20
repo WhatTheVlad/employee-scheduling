@@ -11,33 +11,75 @@
 <body>
     <h1> Employee Scheduling App </h1>
     <form>
+        <!-- STEP 1: ADD REFERENCE DATES -->
+        <div id="step1">
+            <div>
+                <label for="dataInceputTxt">Data Inceput:</label>
+                <input type="text" id="dataInceputTxt" name="dataInceputTxt" placeholder="2020/06/15">
+                <label for="dataSfarsitTxt">Data Sfarsit:</label>
+                <input type="text" id="dataSfarsitTxt" name="dataSfarsitTxt" placeholder="2020/06/25">
+                <div style="padding: 10px">
+                    <button type="button" id="confirmDatesBtn" name="confirmDatesBtn"
+                        onclick="confirmDates()">
+                        Confirma perioada
+                    </button>
+                    <button type="button" id="editDatesBtn" name="editDatesBtn"
+                        disabled="true"
+                        onclick="editDates()">
+                        Modifica perioada
+                    </button>
+                </div>
+            </div>
+            <hr>
+        </div>
+        <!-- STEP 2: ADD EMPLOYEES -->
         <div>
-            <label for="empFullName">Employee Full Name:</label>
+            <label for="empFullName">Nume Angajat:</label>
             <input type="text" id="empFullNameTxt" name="empFullNameTxt">
             <button type="button" id="addEmpNameBtn" name="addEmpNameBtn" onclick="addEmployee()">
-                Add Employee
+                Adauga Angajat
             </button>
         </div>
         <div>
-            <label for="empFullName">Employee Full Name:</label>
+            <table id="employeeTbl" name="employeeTbl">
+                <thead>
+                    <tr>
+                        <th>Nume Angajat</th>
+                        <th>Total Ture</th>
+                        <th>Absente</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+        <hr>
+        <!-- STEP 3: ADD ABSENCES -->
+        <div>
+            <label for="empDateUnavailableTxt">Data Absenta:</label>
             <input type="text" id="empDateUnavailableTxt" name="empDateUnavailableTxt">
             <button type="button" id="addEmpDatesUnavailableBtn" name="addEmpDatesUnavailableBtn"
                 onclick="addDatesUnavailable()">
-                Add Absence
+                Adauga Absenta
             </button>
         </div>
+        <hr>
+        <!-- STEP 4: GENERATE SCHEDULE -->
         <div>
             <button type="button" id="generateScheduleBtn" name="generateScheduleBtn" onclick="generateSchedule()">
                 Genereaza Program Ture
             </button>
         </div>
+        <hr>
         <div>
-            <button type="button" id="showScheduleTableBtn" name="showScheduleTableBtn" onclick="showTable()">
+            <button type="button" id="showScheduleTableBtn" name="showScheduleTableBtn" onclick="showScheduleTable()">
                 Afiseaza Tabel
             </button>
         </div>
+        <hr>
         <div>
-            <table id="scheduleTableTbl" name="scheduleTableTbl"></table>
+            <table id="scheduleTbl" name="scheduleTbl"></table>
         </div>
     </form>
     <script src="schedule.js"></script>
