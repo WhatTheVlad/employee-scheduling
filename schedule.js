@@ -1,4 +1,3 @@
-
 /*
     APP VARIABLES
 */
@@ -361,20 +360,30 @@ function scheduleNightShiftRemainingDays(newSchedule, workday, prevDay2, prevDay
 }
 
 /** Adds an employee element to the employeeObject */
-function addEmployee(empName) {
+//TODO: add check for empty string
+function addEmployee() {
+  let empName = document.getElementById("empFullNameTxt").value;
+  
   employeeObject[empName] = {
     datesUnavailable: [],
     totalShifts: 0
   }
+  document.getElementById("empFullNameTxt").value = "";
+  console.log(employeeObject)
 }
 
 /** Adds the dates for which an employee is unavailable */
-function addDatesUnavailable(empName, datesUnavailable) {
+//TODO: add check for empty string
+function addDatesUnavailable() {
+  let empName = document.getElementById("empFullNameTxt").value;
+  let newDateUnavailable = document.getElementById("empDateUnavailableTxt").value;
   let currentDatesUnavailable = employeeObject[empName]['datesUnavailable'];
-  Object.entries(datesUnavailable).map(date => {
-    currentDatesUnavailable.push(date[1]);
-  });
-  
+
+  currentDatesUnavailable.push(newDateUnavailable);
+  // Object.entries(datesUnavailable).map(date => {
+  //   currentDatesUnavailable.push(date[1]);
+  // });
+  console.log(employeeObject)
 }
 
 /*
@@ -391,7 +400,7 @@ function handleSchedulingError(error, shift, workday) {
      }
     
     console.log(error);
-    console.log('Nu s-a gasit niciun angajat disponibil pentru ziua: ' + workday + ", tura de " + romShift)
+    alert('Nu s-a gasit niciun angajat disponibil pentru ziua: ' + workday + ", tura de " + romShift)
 }
 
 /*
@@ -487,15 +496,22 @@ function testSchedule(testSchedule) {
 */
 
 
-addEmployee('Vlad Mocanu');
-addEmployee('Stefana Donighian');
-addEmployee('Alexandru Aghiniei');
-addEmployee('Cristian Zaharia');
-addEmployee('Bogdan Ghirvu');
-addDatesUnavailable('Vlad Mocanu', ['01.01.2020', '02.01.2020', '03.01.2020'])
-addDatesUnavailable('Stefana Donighian', ['01.01.2020', '05.01.2020', '13.01.2020'])
-addDatesUnavailable('Bogdan Ghirvu', ['12.01.2020', '02.01.2020', '14.01.2020'])
+// addEmployee('Vlad Mocanu');
+// addEmployee('Stefana Donighian');
+// addEmployee('Alexandru Aghiniei');
+// addEmployee('Cristian Zaharia');
+// addEmployee('Bogdan Ghirvu');
+// addDatesUnavailable('Vlad Mocanu', ['01.01.2020', '02.01.2020', '03.01.2020'])
+// addDatesUnavailable('Stefana Donighian', ['01.01.2020', '05.01.2020', '13.01.2020'])
+// addDatesUnavailable('Bogdan Ghirvu', ['12.01.2020', '02.01.2020', '14.01.2020'])
+// generateScheduleJson('2020/01/01','2020/01/29');
+// setEmployeeVariables(dayJson, employeeObject);
+// computeSchedule(dayJson);
+// testSchedule(dayJson);
+
+function generateSchedule() {
 generateScheduleJson('2020/01/01','2020/01/29');
 setEmployeeVariables(dayJson, employeeObject);
 computeSchedule(dayJson);
 testSchedule(dayJson);
+}
