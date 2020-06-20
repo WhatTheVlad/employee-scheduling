@@ -34,7 +34,7 @@ function addEmployee() {
 //TODO: add check for empty string
 function addDatesUnavailable() {
   let empName = document.getElementById("empListSelect").value;
-  let newDateUnavailable = document.getElementById("empDateUnavailableTxt").value.split(',');
+  let newDateUnavailable = document.getElementById("empDateUnavailableTxt").value.replace(/ /g, "").split(',');
   let currentDatesUnavailable = employeeObject[empName]['datesUnavailable'];
 
   newDateUnavailable.forEach(date => {
@@ -44,7 +44,7 @@ function addDatesUnavailable() {
       alert('Data ' + date + ' este deja înregistrată pentru ' + empName)
     }
   })
-
+  document.getElementById("empDateUnavailableTxt").value = "";
   updateEmployeeTable();
 }
 
