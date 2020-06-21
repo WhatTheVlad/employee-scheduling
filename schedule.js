@@ -3,8 +3,9 @@
 */
 const DAY = "day";
 const NIGHT = "night";
-let dayJson = {};
+const months = ['Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie', 'Iulie', 'August', 'Septembrie', 'Octombrie', 'Noiembrie', 'Decembrie'];
 const employeeObject = {};
+let dayJson = {};
 let empNameAndShiftSorted = new Map();
 let minimumShifts = 0;
 let remainingShifts = 0;
@@ -108,9 +109,7 @@ function confirmSchedule() {
   let addEmpNameBtn = document.getElementById("addEmpNameBtn");
   let confirmEmployeesBtn = document.getElementById("confirmEmployeesBtn");
 
-  if (startDate.value == "" || endDate.value == "") {
-    alert("Completați datele programului.")
-  } else {
+  if (validateDates(startDate.value, endDate.value)) {
     dayJson = generateEmptyScheduleJson(getParsedDate(startDate.value), getParsedDate(endDate.value));
     startDate.disabled = true;
     endDate.disabled = true;
@@ -122,6 +121,9 @@ function confirmSchedule() {
     document.getElementById("step1").style="background-color: #dddddd";
     document.getElementById("step2").style="";
     document.getElementById("employeeTblDiv").style="opacity: 1";
+  } else {
+     startDate.value = "";
+     endDate.value = "";
   }
 }
 
@@ -219,7 +221,6 @@ function editDatesUnavailable() {
   document.getElementById("step4").style="background-color: #dddddd";
   document.getElementById("employeeTblDiv").style="opacity: 0.5";
 }
-
 
 /*
     UTIL FUNCTIONS
@@ -442,10 +443,9 @@ function getFormattedDate(date) {
   return day + "." + month + "." + year;
 }
 
-/** Returns the date in the format */
+/** Returns the date in the dd/MM/yyyy format. */
 function getParsedDate(date) {
-  let stringDate = date.toString();
-  let splitDate = stringDate.split('.');
+  let splitDate = date.split('.');
   let day = splitDate[0];
   let month = splitDate[1];
   let year = splitDate[2];
@@ -453,23 +453,32 @@ function getParsedDate(date) {
   return year + '/' + month + '/' + day
 }
 
-/** Generates a JSON object with day and night shifts between two given dates */
+/** Returns total number of days in given month. */
+function getDaysInMonth(month, year) {
+  return new Date(year, month, 0).getDate();
+}
+
+/** Returns month index. */
+function getMonth(month, year) {
+  return new Date(year, month, 0).getMonth();
+}
+
+/** Generates a JSON object with day and night shifts between two given dates. */
 function generateEmptyScheduleJson(startDate, endDate) {
   const dateArray = getDates(new Date(startDate), new Date(endDate));
-
-  let emptyJ = {}
+  let emptySchedule = {}
 
   dateArray.forEach(date => {
     let formattedDate = getFormattedDate(date);
-    emptyJ[formattedDate] = { day: '', night: '' };
+    emptySchedule[formattedDate] = { day: '', night: '' };
   })
   
-  return emptyJ;
+  return emptySchedule;
 
 }
 
 /** Returns  true if the employee is available and false if the employee 
- * is unavailable i.e. vacation, medical leave, other absences */
+ * is unavailable i.e. vacation, medical leave, other absences. */
 function isEmployeeAvailable(workday, employee, employeeObject) {
   let datesUnavailable = employeeObject[employee]["datesUnavailable"];
   if (!datesUnavailable.includes(workday)) {
@@ -479,7 +488,7 @@ function isEmployeeAvailable(workday, employee, employeeObject) {
   }
 }
 
-/** Generates the employee schedule for the first day */
+/** Generates the employee schedule for the first day. */
 function scheduleFirstDay(newSchedule, workday, dayShift, nightShift, currentDay) {
   if (dayShift == "") {
     scheduleDayShiftFirstDay(newSchedule, workday, currentDay);
@@ -489,7 +498,7 @@ function scheduleFirstDay(newSchedule, workday, dayShift, nightShift, currentDay
   }
 }
 
-/** Assigns the most suitable employee to work the day shift of the first day */
+/** Assigns the most suitable employee to work the day shift of the first day. */
 function scheduleDayShiftFirstDay(newSchedule, workday, currentDay) {
   try {
     let availableEmployee = getAvailableEmployeeForFirstDayShift(currentDay);
@@ -501,7 +510,7 @@ function scheduleDayShiftFirstDay(newSchedule, workday, currentDay) {
   }
 }
 
-/** Assigns the most suitable employee to work the night shift of the first day */
+/** Assigns the most suitable employee to work the night shift of the first day. */
 function scheduleNightShiftFirstDay(newSchedule, workday, currentDay) {
     try {
         let availableEmployee = getAvailableEmployeeForFirstNightShift(currentDay);
@@ -513,7 +522,7 @@ function scheduleNightShiftFirstDay(newSchedule, workday, currentDay) {
     }
 }
 
-/** Generates the employee schedule for the second day */
+/** Generates the employee schedule for the second day. */
 function scheduleSecondDay(newSchedule, workday, dayShift, nightShift, prevDay, currentDay) {
   if (dayShift == "") {
     scheduleDayShiftSecondDay(newSchedule, workday, prevDay, currentDay);
@@ -523,7 +532,7 @@ function scheduleSecondDay(newSchedule, workday, dayShift, nightShift, prevDay, 
   }
 }
 
-/** Assigns the most suitable employee to work the day shift of the second day */
+/** Assigns the most suitable employee to work the day shift of the second day. */
 function scheduleDayShiftSecondDay(newSchedule, workday, prevDay, currentDay) {
     try {
         let availableEmployee = getAvailableEmployeeForSecondDayShift(prevDay, currentDay);
@@ -535,7 +544,7 @@ function scheduleDayShiftSecondDay(newSchedule, workday, prevDay, currentDay) {
     }
 }
 
-/** Assigns the most suitable employee to work the night shift of the second day */
+/** Assigns the most suitable employee to work the night shift of the second day. */
 function scheduleNightShiftSecondDay(newSchedule, workday, prevDay, currentDay) {
     try{
         let availableEmployee = getAvailableEmployeeForSecondNightShift(prevDay, currentDay);
@@ -547,7 +556,7 @@ function scheduleNightShiftSecondDay(newSchedule, workday, prevDay, currentDay) 
     }  
 }
 
-/** Generates the employee schedule for the remaining days */
+/** Generates the employee schedule for the remaining days. */
 function scheduleRemainingDays(newSchedule, workday, dayShift, nightShift, prevDay2, prevDay, currentDay) {
   if (dayShift == "") {
     scheduleDayShiftRemainingDays(newSchedule, workday, prevDay, prevDay2);
@@ -557,7 +566,7 @@ function scheduleRemainingDays(newSchedule, workday, dayShift, nightShift, prevD
   }
 }
 
-/** Assigns the most suitable employee to work the day shift of the remaining days */
+/** Assigns the most suitable employee to work the day shift of the remaining days. */
 function scheduleDayShiftRemainingDays(newSchedule, workday, prevDay, prevDay2) {
     try {
         let availableEmployee = getAvailableEmployeeForDayShift(workday, prevDay, prevDay2);
@@ -569,7 +578,7 @@ function scheduleDayShiftRemainingDays(newSchedule, workday, prevDay, prevDay2) 
     }
 }
 
-/** Assigns the most suitable employee to work the night shift of remaining days */
+/** Assigns the most suitable employee to work the night shift of remaining days. */
 function scheduleNightShiftRemainingDays(newSchedule, workday, prevDay2, prevDay, currentDay) {
     try {
         let availableEmployee = getAvailableEmployeeForNightShift(currentDay, prevDay, prevDay2);
@@ -581,20 +590,21 @@ function scheduleNightShiftRemainingDays(newSchedule, workday, prevDay2, prevDay
     }
 }
 
-/** Exports the computed schedule into an .xml file. */
+/** Exports the computed schedule into a .xml file. */
 function exportScheduleToExcel(elem) {
   let table = document.getElementById("scheduleTbl");
   let html = table.outerHTML;
-  let url = 'data:application/vnd.ms-excel,' + escape(html); // Set your html table into url 
+  let url = 'data:application/vnd.ms-excel,' + escape(html); 
   elem.setAttribute("href", url);
-  elem.setAttribute("download", "export.xls"); // Choose the file name
+  elem.setAttribute("download", "export.xls");
   return false;
 }
 
 /*
-    ERROR HANDLING FUNCTIONS
+    VALIDATION & ERROR HANDLING FUNCTIONS
 */
 
+/** Throws an alert if no employee can be assigned to a shift. */
 function handleSchedulingError(error, shift, workday) {
     let romShift;
     
@@ -606,6 +616,74 @@ function handleSchedulingError(error, shift, workday) {
     
     console.log(error);
     alert('Nu s-a gasit niciun angajat disponibil pentru ziua: ' + workday + ", tura de " + romShift)
+}
+
+/** Return true if dates pass all validation conditions. */
+function validateDates(startDate, endDate) {
+  if (checkEmptyDates(startDate, endDate) &&
+    checkDaysInDate(startDate) &&
+    checkDaysInDate(endDate) &&
+    checkMonthInDate(startDate) &&
+    checkMonthInDate(endDate) &&
+    checkStartDateBiggerThanEndDate(startDate, endDate)) {
+    return true
+  } else {
+    return false
+  }
+}
+
+/** Returns true if date is not empty. */
+function checkEmptyDates(startDate, endDate) {
+  if (startDate == "" || endDate == "") {
+    alert("Completați datele programului.")
+    return false;
+  } else {
+    return true;
+  }
+}
+
+/** Returns false if the start date is bigger than the end date. */
+function checkStartDateBiggerThanEndDate(startDate, endDate) {
+  let parsedStartDate = new Date(getParsedDate(startDate));
+  let parsedEndDate = new Date(getParsedDate(endDate));
+
+  if (parsedStartDate >= parsedEndDate) {
+    alert('Data de început nu poate fi mai mare sau egală cu data de sfârșit')
+    return false;
+  } else {
+    return true;
+  }
+}
+
+/** Returns false if number of days is invalid. */
+function checkDaysInDate(date) {
+  let splitDate = date.split('.');
+  let day = splitDate[0];
+  let month = splitDate[1];
+  let year = splitDate[2];
+  let daysInMonth = getDaysInMonth(month, year);
+  let monthIndex = getMonth(month, year)
+
+  if (parseInt(day) > parseInt(daysInMonth)) {
+    alert('Luna ' + months[monthIndex] + ' a anului ' + year + ' poate avea maximum ' + daysInMonth + ' zile.');
+    return false;
+  } else {
+    return true;
+  }
+}
+
+/** Returns false if month is invalid. */
+function checkMonthInDate(date) {
+  console.log(checkMonthInDate);
+  let splitDate = date.split('.');
+  let month = splitDate[1];
+
+  if (parseInt(month) > months.length) {
+    alert('Anul poate avea doar 12 luni.');
+    return false
+  } else {
+    return true
+  }
 }
 
 /*
