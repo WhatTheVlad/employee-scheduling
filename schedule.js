@@ -156,6 +156,10 @@ function confirmEmployees() {
     let empListSelect = document.getElementById("empListSelect");
     let empNames = Object.keys(employeeObject);
 
+    for (i = empListSelect.options.length; i >= 0; i--) {
+      empListSelect.options.remove(i);
+    }
+
     Object.entries(empNames).map(empNameEntry => {
       let empName = empNameEntry[1]
       let option = document.createElement("option");
