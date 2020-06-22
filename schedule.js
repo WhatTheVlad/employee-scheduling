@@ -9,6 +9,8 @@ let dayJson = {};
 let empNameAndShiftSorted = new Map();
 let minimumShifts = 0;
 let remainingShifts = 0;
+let startDate = '';
+let endDate = '';
 
 /*
     HTML FUNCTIONS
@@ -51,11 +53,11 @@ function addDatesUnavailable() {
 
 /** Generates the schedule with the available user data. */
 function generateSchedule() {
+  dayJson = generateEmptyScheduleJson(getParsedDate(startDate), getParsedDate(endDate));
   sortEmployeesByNumerOfShifts(employeeObject);
   computeSchedule(dayJson);
+  generateScheduleTable();
   testSchedule(dayJson);
-  showScheduleTable();
-
   document.getElementById("scheduleTblDiv").style="opacity: 1";
 }
 
@@ -74,45 +76,53 @@ function updateEmployeeTable(){
     empNameCell.innerHTML = ele[0];
     empDatesUnavailableCell.innerHTML = ele[1]['datesUnavailable'];
     empTotalShiftsCell.innerHTML = ele[1]['totalShifts']
-    
   })
-
   oldTbody.parentNode.replaceChild(newTbody, oldTbody)
 }
 
 /** Fills schedule table with the generated schedule. */
-function showScheduleTable(){
-  let scheduleTable = document.getElementById("scheduleTbl").rows;
-  let headerRow = scheduleTable[0];
-  let dayShiftRow = scheduleTable[1];
-  let nightShiftRow = scheduleTable[2];
+function generateScheduleTable(){
+  let scheduleTable = document.getElementById("scheduleTbl");
+  let oldTbody = scheduleTable.tBodies[0];
+  let newTbody = document.createElement('tbody');
+  let dateRow = newTbody.insertRow(-1);
+  let dayShiftRow = newTbody.insertRow(-1);
+  let nightShiftRow = newTbody.insertRow(-1);
+  let headerFirstRow = dateRow.insertCell(-1);
+  let headerSecondRow = dayShiftRow.insertCell(-1);
+  let headerThirdRow = nightShiftRow.insertCell(-1);
 
+  headerFirstRow.innerHTML = 'Data';
+  headerSecondRow.innerHTML = 'Zi';
+  headerThirdRow.innerHTML = 'Noapte'
+  
   Object.entries(dayJson).map(ele => {
-    let newHeaderCell = headerRow.insertCell(-1);
+    let dateCell = dateRow.insertCell(-1);
     let dayShiftCell = dayShiftRow.insertCell(-1);
     let nightShiftCell = nightShiftRow.insertCell(-1);
 
-    newHeaderCell.innerHTML = ele[0];
+    dateCell.innerHTML = ele[0];
     dayShiftCell.innerHTML = ele[1]['day'];
-    nightShiftCell.innerHTML = ele[1]['night']
-    
+    nightShiftCell.innerHTML = ele[1]['night'];
   })
+  oldTbody.parentNode.replaceChild(newTbody, oldTbody)
 }
 
 /** Disables HTML elements for STEP1 */
 function confirmSchedule() {
-  let startDate = document.getElementById("dataInceputTxt");
-  let endDate = document.getElementById("dataSfarsitTxt");
+  let startDateTxt = document.getElementById("dataInceputTxt");
+  let endDateTxt = document.getElementById("dataSfarsitTxt");
   let confirmScheduleBtn = document.getElementById("confirmScheduleBtn");
   let editScheduleBtn = document.getElementById("editScheduleBtn");
   let empFullNameTxt = document.getElementById("empFullNameTxt");
   let addEmpNameBtn = document.getElementById("addEmpNameBtn");
   let confirmEmployeesBtn = document.getElementById("confirmEmployeesBtn");
 
-  if (validateDates(startDate.value, endDate.value)) {
-    dayJson = generateEmptyScheduleJson(getParsedDate(startDate.value), getParsedDate(endDate.value));
-    startDate.disabled = true;
-    endDate.disabled = true;
+  if (validateDates(startDateTxt.value, endDateTxt.value)) {
+    startDate = startDateTxt.value;
+    endDate = endDateTxt.value;
+    startDateTxt.disabled = true;
+    endDateTxt.disabled = true;
     confirmScheduleBtn.disabled = true;
     editScheduleBtn.disabled = false;
     empFullNameTxt.disabled = false;
@@ -122,8 +132,10 @@ function confirmSchedule() {
     document.getElementById("step2").style="";
     document.getElementById("employeeTblDiv").style="opacity: 1";
   } else {
-     startDate.value = "";
-     endDate.value = "";
+    startDate = '';
+    endDate = ''
+    startDateTxt.value = '';
+    endDateTxt.value = '';
   }
 }
 
@@ -249,7 +261,6 @@ function computeSchedule(newSchedule) {
       scheduleRemainingDays(newSchedule, workday, dayShift, nightShift, prevDay2, prevDay, currentDay);
     }
   });
-  //console.log(newSchedule);
   return newSchedule;
 }
 
@@ -678,7 +689,6 @@ function checkDaysInDate(date) {
 
 /** Returns false if month is invalid. */
 function checkMonthInDate(date) {
-  console.log(checkMonthInDate);
   let splitDate = date.split('.');
   let month = splitDate[1];
 
