@@ -67,15 +67,31 @@ function updateEmployeeTable(){
   let oldTbody = empTable.tBodies[0];
   let newTbody = document.createElement('tbody');
 
-  Object.entries(employeeObject).map(ele => {
+  Object.entries(employeeObject).map(emp => {
     let newRow = newTbody.insertRow(-1);
     let empNameCell = newRow.insertCell(-1);
     let empTotalShiftsCell = newRow.insertCell(-1);
     let empDatesUnavailableCell = newRow.insertCell(-1);
+    let editEmpButton = document.createElement("button");
+    let deleteEmpButton = document.createElement("button");
 
-    empNameCell.innerHTML = ele[0];
-    empDatesUnavailableCell.innerHTML = ele[1]['datesUnavailable'];
-    empTotalShiftsCell.innerHTML = ele[1]['totalShifts']
+    editEmpButton.innerHTML = "Modifică";
+    editEmpButton.onClick = "editEmpTableRow()";
+    editEmpButton.id = "editEmpTableRowBtn" + emp[0];
+    editEmpButton.name = "editEmpTableRowBtn" + emp[0];
+    deleteEmpButton.innerHTML = "Șterge";
+    deleteEmpButton.onClick = "deleteEmpTableRow()";
+    deleteEmpButton.id = "deleteEmpTableRowBtn" + emp[0];
+    deleteEmpButton.name = "deleteEmpTableRowBtn" + emp[0];
+    console.log(editEmpButton)
+    console.log(deleteEmpButton)
+    editCell = newRow.insertCell(-1);
+    deleteCell = newRow.insertCell(-1);
+    editCell.appendChild(editEmpButton);
+    deleteCell.appendChild(deleteEmpButton)
+    empNameCell.innerHTML = emp[0];
+    empDatesUnavailableCell.innerHTML = emp[1]['datesUnavailable'];
+    empTotalShiftsCell.innerHTML = emp[1]['totalShifts']
   })
   oldTbody.parentNode.replaceChild(newTbody, oldTbody)
 }
