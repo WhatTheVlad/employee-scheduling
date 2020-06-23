@@ -25,6 +25,8 @@ function addEmployee() {
 
   if (empName == "" || empName == " ") {
     alert("Completați câmpul ”Nume Angajat”")
+  } else if (Object.keys(employeeObject).includes(empName)) {
+    alert('Exista deja un angajat cu numele ' + empName);
   } else {
     if (selectedEmpTblRow != null) {
       selectedEmpTblRow.cells[0].innerHTML = empName;
