@@ -83,3 +83,7 @@ body {
 h1 {
     text-align: center;
 }
+
+.tableButton {
+    position: inherit;
+}

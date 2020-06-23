@@ -11,6 +11,8 @@ let minimumShifts = 0;
 let remainingShifts = 0;
 let startDate = '';
 let endDate = '';
+let selectedEmpTblRow = null;
+let selectedEmpTblName = '';
 
 /*
     HTML FUNCTIONS
@@ -20,40 +22,52 @@ let endDate = '';
 //TODO: add check for empty string
 function addEmployee() {
   let empName = document.getElementById("empFullNameTxt").value;
-  
+
   if (empName == "" || empName == " ") {
-    alert("Nume Incorect")
+    alert("Completați câmpul ”Nume Angajat”")
   } else {
-    employeeObject[empName] = {
-      datesUnavailable: [],
-      totalShifts: 0
+    if (selectedEmpTblRow != null) {
+      selectedEmpTblRow.cells[0].innerHTML = empName;
+      updateEmployeesObjectKey(employeeObject, selectedEmpTblName, empName)
+      updateEmployeeTable();
+      selectedEmpTblRow = null;
+      selectedEmpTblName = '';
+    } else {
+      employeeObject[empName] = {
+        datesUnavailable: [],
+        totalShifts: 0
+      }
+      updateEmployeeTable();
     }
-    document.getElementById("empFullNameTxt").value = "";
-    updateEmployeeTable();
   }
+  document.getElementById("empFullNameTxt").value = "";
 }
 
 /** Adds the dates for which an employee is unavailable */
 //TODO: add check for empty string
 function addDatesUnavailable() {
   let empName = document.getElementById("empListSelect").value;
-  let newDateUnavailable = document.getElementById("empDateUnavailableTxt").value.replace(/ /g, "").split(',');
+  let empDateUnavailableTxt = document.getElementById("empDateUnavailableTxt").value
+  let newDateUnavailable = empDateUnavailableTxt.replace(/ /g, "").split(',');
   let currentDatesUnavailable = employeeObject[empName]['datesUnavailable'];
 
-  newDateUnavailable.forEach(date => {
-    if (!currentDatesUnavailable.includes(date)) {
-      currentDatesUnavailable.push(date);
-    } else {
-      alert('Data ' + date + ' este deja înregistrată pentru ' + empName)
-    }
-  })
+  if (empDateUnavailableTxt != '') {
+    newDateUnavailable.forEach(date => {
+      if (!currentDatesUnavailable.includes(date)) {
+        currentDatesUnavailable.push(date);
+      } else {
+        alert('Data ' + date + ' este deja înregistrată pentru ' + empName)
+      }
+    })
+  } else {
+    alert('Introduceți una sau mai multe absențe');
+  }
   document.getElementById("empDateUnavailableTxt").value = "";
   updateEmployeeTable();
 }
 
 /** Generates the schedule with the available user data. */
 function generateSchedule() {
-  dayJson = generateEmptyScheduleJson(getParsedDate(startDate), getParsedDate(endDate));
   sortEmployeesByNumerOfShifts(employeeObject);
   computeSchedule(dayJson);
   generateScheduleTable();
@@ -66,34 +80,38 @@ function updateEmployeeTable(){
   let empTable = document.getElementById("employeeTbl");
   let oldTbody = empTable.tBodies[0];
   let newTbody = document.createElement('tbody');
+  let employees = Object.keys(employeeObject);
 
   Object.entries(employeeObject).map(emp => {
+    let indexOfEmp = employees.indexOf(emp[0]);
     let newRow = newTbody.insertRow(-1);
     let empNameCell = newRow.insertCell(-1);
     let empTotalShiftsCell = newRow.insertCell(-1);
     let empDatesUnavailableCell = newRow.insertCell(-1);
-    let editEmpButton = document.createElement("button");
-    let deleteEmpButton = document.createElement("button");
+    let editCell = newRow.insertCell(-1);
 
-    editEmpButton.innerHTML = "Modifică";
-    editEmpButton.onClick = "editEmpTableRow()";
-    editEmpButton.id = "editEmpTableRowBtn" + emp[0];
-    editEmpButton.name = "editEmpTableRowBtn" + emp[0];
-    deleteEmpButton.innerHTML = "Șterge";
-    deleteEmpButton.onClick = "deleteEmpTableRow()";
-    deleteEmpButton.id = "deleteEmpTableRowBtn" + emp[0];
-    deleteEmpButton.name = "deleteEmpTableRowBtn" + emp[0];
-    console.log(editEmpButton)
-    console.log(deleteEmpButton)
-    editCell = newRow.insertCell(-1);
-    deleteCell = newRow.insertCell(-1);
-    editCell.appendChild(editEmpButton);
-    deleteCell.appendChild(deleteEmpButton)
+    editCell.innerHTML = '<button type="button" id="editTblEmpBtn' + indexOfEmp + '" name="editTblEmpBtn' + indexOfEmp + '" onClick="editEmpTableRow(this)" class="tableButton">Modifică</button> <button type="button" id="deleteTblEmpBtn' + indexOfEmp + '" name="deleteTblEmpBtn' + indexOfEmp + '" onClick="deleteEmpTableRow(this)" class="tableButton">Șterge</button>';
     empNameCell.innerHTML = emp[0];
     empDatesUnavailableCell.innerHTML = emp[1]['datesUnavailable'];
     empTotalShiftsCell.innerHTML = emp[1]['totalShifts']
   })
-  oldTbody.parentNode.replaceChild(newTbody, oldTbody)
+  oldTbody.parentNode.replaceChild(newTbody, oldTbody);
+}
+
+/** Enables editing the selected row. */
+function editEmpTableRow(td) {
+  selectedEmpTblRow = td.parentNode.parentNode;
+  document.getElementById("empFullNameTxt").value = selectedEmpTblRow.cells[0].innerHTML;
+  selectedEmpTblName = selectedEmpTblRow.cells[0].innerHTML;
+}
+
+/** Removes the selected row from the table and the employee object. */
+function deleteEmpTableRow(td) {
+  if(confirm('Confirmați ștergerea angajatului din tabel')) {
+  let row = td.parentNode.parentNode;
+  document.getElementById("employeeTbl").deleteRow(row.rowIndex);
+  delete employeeObject[row.cells[0].innerHTML]
+  }
 }
 
 /** Fills schedule table with the generated schedule. */
@@ -121,7 +139,7 @@ function generateScheduleTable(){
     dayShiftCell.innerHTML = ele[1]['day'];
     nightShiftCell.innerHTML = ele[1]['night'];
   })
-  oldTbody.parentNode.replaceChild(newTbody, oldTbody)
+  oldTbody.parentNode.replaceChild(newTbody, oldTbody);
 }
 
 /** Disables HTML elements for STEP1 */
@@ -137,6 +155,7 @@ function confirmSchedule() {
   if (validateDates(startDateTxt.value, endDateTxt.value)) {
     startDate = startDateTxt.value;
     endDate = endDateTxt.value;
+    dayJson = generateEmptyScheduleJson(getParsedDate(startDate), getParsedDate(endDate));
     startDateTxt.disabled = true;
     endDateTxt.disabled = true;
     confirmScheduleBtn.disabled = true;
@@ -521,10 +540,10 @@ function isEmployeeAvailable(workday, employee, employeeObject) {
 
 /** Generates the employee schedule for the first day. */
 function scheduleFirstDay(newSchedule, workday, dayShift, nightShift, currentDay) {
-  if (dayShift == "") {
+  if (dayShift == '' || dayShift == undefined) {
     scheduleDayShiftFirstDay(newSchedule, workday, currentDay);
   }
-  if (nightShift == "") {
+  if (nightShift == '' || nightShift == undefined) {
     scheduleNightShiftFirstDay(newSchedule, workday, currentDay);
   }
 }
@@ -555,10 +574,10 @@ function scheduleNightShiftFirstDay(newSchedule, workday, currentDay) {
 
 /** Generates the employee schedule for the second day. */
 function scheduleSecondDay(newSchedule, workday, dayShift, nightShift, prevDay, currentDay) {
-  if (dayShift == "") {
+  if (dayShift == '' || dayShift == undefined) {
     scheduleDayShiftSecondDay(newSchedule, workday, prevDay, currentDay);
   }
-  if (nightShift == "") {
+  if (nightShift == '' || nightShift == undefined) {
     scheduleNightShiftSecondDay(newSchedule, workday, prevDay, currentDay);
   }
 }
@@ -589,10 +608,10 @@ function scheduleNightShiftSecondDay(newSchedule, workday, prevDay, currentDay) 
 
 /** Generates the employee schedule for the remaining days. */
 function scheduleRemainingDays(newSchedule, workday, dayShift, nightShift, prevDay2, prevDay, currentDay) {
-  if (dayShift == "") {
+  if (dayShift == '' || dayShift == undefined) {
     scheduleDayShiftRemainingDays(newSchedule, workday, prevDay, prevDay2);
   }
-  if (nightShift == "") {
+  if (nightShift == '' || nightShift == undefined) {
     scheduleNightShiftRemainingDays(newSchedule, workday, prevDay2, prevDay, currentDay);
   }
 }
@@ -629,6 +648,14 @@ function exportScheduleToExcel(elem) {
   elem.setAttribute("href", url);
   elem.setAttribute("download", "export.xls");
   return false;
+}
+
+/** Updates the old key of the employee object with the new key. */
+function updateEmployeesObjectKey(obj, oldKey, newKey) {
+  if (oldKey !== newKey) {
+    Object.defineProperty(obj, newKey, Object.getOwnPropertyDescriptor(obj, oldKey));
+    delete obj[oldKey];
+  }
 }
 
 /*
