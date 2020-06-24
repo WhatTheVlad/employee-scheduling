@@ -275,6 +275,11 @@ function editDatesUnavailable() {
   document.getElementById("employeeTblDiv").style="opacity: 0.5";
 }
 
+/** Reloads page */
+function reloadPage() {
+  location.reload(true);
+}
+
 /*
     UTIL FUNCTIONS
 */
