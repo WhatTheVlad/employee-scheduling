@@ -14,6 +14,7 @@
         <!-- STEP 1: ADD REFERENCE DATES -->
         <div id="step1">
             <div>
+                <h3 align="center"> Selectare Perioadă </h3>
                 <div style="float: left;">
                     <input type="text" id="dataInceputTxt" name="dataInceputTxt" placeholder="15.03.2020">
                     <label for="dataInceputTxt">Dată Început:</label>
@@ -37,8 +38,10 @@
         <hr>
         <!-- STEP 2: ADD EMPLOYEES -->
         <div id="step2" style="background-color: #dddddd">
-            <div>
-                <input type="text" id="empFullNameTxt" name="empFullNameTxt" disabled="true" placeholder="ex: Florin Piersic">
+            <h3 align="center"> Listă Angajați </h3>
+            <div style="align-self: center;">
+                <input type="text" id="empFullNameTxt" name="empFullNameTxt" disabled="true"
+                    placeholder="ex: Florin Piersic">
                 <label for="empFullName">Nume Angajat:</label>
                 <button type="button" id="addEmpNameBtn" name="addEmpNameBtn" disabled="true" onclick="addEmployee()">
                     Salvează
@@ -69,8 +72,59 @@
             </div>
         </div>
         <hr>
-        <!-- STEP 3: ADD ABSENCES -->
+        <!-- STEP 3: ADD LAST 2 DAYS OF SCHEDULE -->
         <div id="step3" style="background-color: #dddddd">
+            <h3 align="center"> Zile Referință </h3>
+            <div style="padding: 3px;">
+                <div id="last2DaysTblDiv" style="padding-top: 15px; opacity: 0.5;" align="center">
+                    <table id="last2DaysTbl" name="last2DaysTbl" style="padding:3px; background-color: #f1f369">
+                        <tbody>
+                            <tr>
+                                <td>Data</td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Zi</td>
+                                <td>
+                                    <input type="text" id="last2DayDayShift" name="last2DayDayShift"
+                                        placeholder="Florin Piersic" style="position: inherit;">
+                                </td>
+                                <td>
+                                    <input type="text" id="lastDayDayShift" name="lastDayDayShift" placeholder="Florin Piersic"
+                                        style="position: inherit;">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Noapte</td>
+                                <td>
+                                    <input type="text" id="last2DayNightShift" name="last2DayNightShift"
+                                        placeholder="Florin Piersic" style="position: inherit;">
+                                </td>
+                                <td>
+                                    <input type="text" id="lastDayNightShift" name="lastDayNightShift"
+                                        placeholder="Florin Piersic" style="position: inherit;">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div style="padding: 10px; padding-top: 15px;">
+                    <button type="button" id="confirmLast2DaysBtn" name="confirmLast2DaysBtn" disabled="true"
+                        onclick="confirmLast2Days()">
+                        Confirm
+                    </button>
+                    <button type="button" id="editLast2DaysBtn" name="editLast2DaysBtn" disabled="true"
+                        onclick="editLast2Days()">
+                        Modific
+                    </button>
+                </div>
+            </div>
+            <hr>
+        </div>
+        <!-- STEP 4: ADD ABSENCES -->
+        <div id="step4" style="background-color: #dddddd">
+            <h3 align="center"> Absențe </h3>
             <div style="padding: 3px;">
                 <select id="empListSelect" name="empListSelect" disabled="true"></select>
                 <label for="empListSelect">Alege Angajat:</label>
@@ -97,15 +151,16 @@
             </div>
         </div>
         <hr>
-        <!-- STEP 4: GENERATE SCHEDULE -->
-        <div id="step4" style="background-color: #dddddd">
+        <!-- STEP 5: GENERATE SCHEDULE -->
+        <div id="step5" style="background-color: #dddddd">
+            <h3 align="center"> Program </h3>
             <div style="padding: 10px;">
                 <button type="button" id="generateScheduleBtn" name="generateScheduleBtn" disabled="true"
                     onclick="generateSchedule()">
                     Generează Program
                 </button>
             </div>
-            <div id="scheduleTblDiv" style="padding-top: 15px; opacity: 0;">
+            <div id="scheduleTblDiv" style="padding-top: 15px; opacity: 0.5;">
                 <table id="scheduleTbl" name="scheduleTbl" style="padding:3px; background-color: #f1f369">
                     <tbody>
                     </tbody>

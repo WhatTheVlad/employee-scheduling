@@ -87,3 +87,8 @@ h1 {
 .tableButton {
     position: inherit;
 }
+
+.group {
+    display: block;
+}
+

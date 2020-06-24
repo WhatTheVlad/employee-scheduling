@@ -6,6 +6,7 @@ const NIGHT = "night";
 const months = ['Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie', 'Iulie', 'August', 'Septembrie', 'Octombrie', 'Noiembrie', 'Decembrie'];
 const employeeObject = {};
 let dayJson = {};
+let last2Days = {};
 let empNameAndShiftSorted = new Map();
 let minimumShifts = 0;
 let remainingShifts = 0;
@@ -13,6 +14,7 @@ let startDate = '';
 let endDate = '';
 let selectedEmpTblRow = null;
 let selectedEmpTblName = '';
+let useReferenceDays = true;
 
 /*
     HTML FUNCTIONS
@@ -112,7 +114,7 @@ function deleteEmpTableRow(td) {
   if(confirm('Confirmați ștergerea angajatului din tabel')) {
   let row = td.parentNode.parentNode;
   document.getElementById("employeeTbl").deleteRow(row.rowIndex);
-  delete employeeObject[row.cells[0].innerHTML]
+  delete employeeObject[row.cells[0].innerHTML];
   }
 }
 
@@ -127,10 +129,22 @@ function generateScheduleTable(){
   let headerFirstRow = dateRow.insertCell(-1);
   let headerSecondRow = dayShiftRow.insertCell(-1);
   let headerThirdRow = nightShiftRow.insertCell(-1);
-
+  let last2DaysEntries = Object.entries(last2Days);
   headerFirstRow.innerHTML = 'Data';
   headerSecondRow.innerHTML = 'Zi';
   headerThirdRow.innerHTML = 'Noapte'
+  
+  if(last2DaysEntries.length > 0) {
+    last2DaysEntries.map(ele => {
+      let dateCell = dateRow.insertCell(-1);
+      let dayShiftCell = dayShiftRow.insertCell(-1);
+      let nightShiftCell = nightShiftRow.insertCell(-1);
+  
+      dateCell.innerHTML = ele[0];
+      dayShiftCell.innerHTML = 'emp1';
+      nightShiftCell.innerHTML = 'emp2';
+    })
+  }
   
   Object.entries(dayJson).map(ele => {
     let dateCell = dateRow.insertCell(-1);
@@ -141,7 +155,24 @@ function generateScheduleTable(){
     dayShiftCell.innerHTML = ele[1]['day'];
     nightShiftCell.innerHTML = ele[1]['night'];
   })
+
   oldTbody.parentNode.replaceChild(newTbody, oldTbody);
+}
+
+/** Adds the last 2 reference days for the generated table */
+function generateLast2DaysSchedule(){
+  let last2DaysTable = document.getElementById("last2DaysTbl");
+  let firstRow = last2DaysTable.rows[0];
+  let last2Day = firstRow.cells[1];
+  let lastDay = firstRow.cells[2];
+  let last2DaysKeys = Object.keys(last2Days);
+
+  last2Day.innerHTML = last2DaysKeys[0];
+  lastDay.innerHTML = last2DaysKeys[1];
+
+  console.log('last2Day = ' + last2Day);
+  console.log('lastDay = ' + lastDay);
+
 }
 
 /** Disables HTML elements for STEP1 */
@@ -174,6 +205,22 @@ function confirmSchedule() {
     startDateTxt.value = '';
     endDateTxt.value = '';
   }
+
+   generateScheduleTable();
+
+  if (confirm('Doriti să folosiți zile de referință?')) {
+    document.getElementById("step3").hidden = false;
+    let dayJsonFirstEntry = Object.entries(dayJson)[0][0];
+    let prevDay = new Date(getParsedDate(dayJsonFirstEntry)).addDays(-1)
+    let prev2Day = new Date(getParsedDate(dayJsonFirstEntry)).addDays(-2)
+
+    last2Days = generateEmptyScheduleJson(prev2Day, prevDay)
+    useReferenceDays = true;
+    generateLast2DaysSchedule();
+  } else {
+    useReferenceDays = false;
+    document.getElementById("step3").hidden = true;
+  }
 }
 
 /** Enables HTML elements for STEP1 */
@@ -192,6 +239,7 @@ function editSchedule() {
   document.getElementById("step2").style="background-color: #dddddd";
   document.getElementById("step3").style="background-color: #dddddd";
   document.getElementById("step4").style="background-color: #dddddd";
+  document.getElementById("step5").style="background-color: #dddddd";
   document.getElementById("employeeTblDiv").style="opacity: 0.5";
 }
 
@@ -220,14 +268,20 @@ function confirmEmployees() {
     document.getElementById("empFullNameTxt").disabled = true;
     document.getElementById("addEmpNameBtn").disabled = true;
     document.getElementById("confirmEmployeesBtn").disabled = true;
-    document.getElementById("confirmDatesUnavailableBtn").disabled = false;
     document.getElementById("editEmployeesBtn").disabled = false;
-    document.getElementById("addEmpDatesUnavailableBtn").disabled = false;
-    document.getElementById("empDateUnavailableTxt").disabled = false;
-    document.getElementById("empListSelect").disabled = false;
-    document.getElementById("step2").style="background-color: #dddddd";
-    document.getElementById("step3").style="";
-    document.getElementById("employeeTblDiv").style="opacity: 0.5";
+    document.getElementById("editEmployeesBtn").disabled = false;
+    document.getElementById("step2").style = "background-color: #dddddd";
+    document.getElementById("employeeTblDiv").style = "opacity: 0.5";
+    if (useReferenceDays) {
+      document.getElementById("confirmLast2DaysBtn").disabled = false;
+      document.getElementById("step3").style = "";
+    } else {
+      document.getElementById("step4").style = "";
+      document.getElementById("confirmDatesUnavailableBtn").disabled = false;
+      document.getElementById("addEmpDatesUnavailableBtn").disabled = false;
+      document.getElementById("empDateUnavailableTxt").disabled = false;
+      document.getElementById("empListSelect").disabled = false;
+    }
   }
 }
 
@@ -247,7 +301,22 @@ function editEmployees() {
   document.getElementById("step2").style="";
   document.getElementById("step3").style="background-color: #dddddd";
   document.getElementById("step4").style="background-color: #dddddd";
+  document.getElementById("step5").style="background-color: #dddddd";
   document.getElementById("employeeTblDiv").style="opacity: 1";
+}
+
+function confirmLast2Days() {
+  document.getElementById("confirmLast2DaysBtn").disabled = true;
+  document.getElementById("step3").style="background-color: #dddddd;";
+  document.getElementById("step4").style="";
+  document.getElementById("confirmDatesUnavailableBtn").disabled = false;
+  document.getElementById("addEmpDatesUnavailableBtn").disabled = false;
+  document.getElementById("empDateUnavailableTxt").disabled = false;
+  document.getElementById("empListSelect").disabled = false;
+}
+
+function editLast2Days() {
+
 }
 
 function confirmDatesUnavailable() {
@@ -257,8 +326,8 @@ function confirmDatesUnavailable() {
   document.getElementById("empListSelect").disabled = true;
   document.getElementById("editDatesUnavailableBtn").disabled = false;
   document.getElementById("generateScheduleBtn").disabled = false;
-  document.getElementById("step3").style="background-color: #dddddd;";
-  document.getElementById("step4").style="";
+  document.getElementById("step4").style="background-color: #dddddd;";
+  document.getElementById("step5").style="";
   document.getElementById("employeeTblDiv").style="opacity: 0.5";
 }
 
@@ -270,8 +339,9 @@ function editDatesUnavailable() {
   document.getElementById("editDatesUnavailableBtn").disabled = true;
   document.getElementById("step1").style="background-color: #dddddd";
   document.getElementById("step2").style="background-color: #dddddd";
-  document.getElementById("step3").style="";
-  document.getElementById("step4").style="background-color: #dddddd";
+  document.getElementById("step3").style="background-color: #dddddd";
+  document.getElementById("step4").style="";
+  document.getElementById("step5").style="background-color: #dddddd";
   document.getElementById("employeeTblDiv").style="opacity: 0.5";
 }
 
