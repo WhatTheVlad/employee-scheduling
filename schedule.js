@@ -775,7 +775,7 @@ function exportScheduleToExcel(elem) {
   let html = table.outerHTML;
   let url = 'data:application/vnd.ms-excel,' + escape(html); 
   elem.setAttribute("href", url);
-  elem.setAttribute("download", "export.xls");
+  elem.setAttribute("download", "Program_Paza_" + startDate + '-' + endDate + ".xls");
   return false;
 }
 
