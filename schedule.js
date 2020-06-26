@@ -76,7 +76,6 @@ function generateSchedule() {
   computeSchedule(dayJson);
   generateScheduleTable();
   testSchedule(dayJson);
-  document.getElementById("scheduleTblDiv").style="opacity: 1";
 }
 
 /** Fills employee table with the current employee database. */
@@ -169,13 +168,9 @@ function generateLast2DaysSchedule(){
 
   last2Day.innerHTML = last2DaysKeys[0];
   lastDay.innerHTML = last2DaysKeys[1];
-
-  console.log('last2Day = ' + last2Day);
-  console.log('lastDay = ' + lastDay);
-
 }
 
-/** Disables HTML elements for STEP1 */
+/** Page actions for when the Confirm button is clicked in the STEP1 section. */
 function confirmSchedule() {
   let startDateTxt = document.getElementById("dataInceputTxt");
   let endDateTxt = document.getElementById("dataSfarsitTxt");
@@ -189,6 +184,23 @@ function confirmSchedule() {
     startDate = startDateTxt.value;
     endDate = endDateTxt.value;
     dayJson = generateEmptyScheduleJson(getParsedDate(startDate), getParsedDate(endDate));
+    let dayJsonFirstEntry = Object.entries(dayJson)[0][0];
+    let prevDay = new Date(getParsedDate(dayJsonFirstEntry)).addDays(-1)
+    let prev2Day = new Date(getParsedDate(dayJsonFirstEntry)).addDays(-2)
+    last2Days = generateEmptyScheduleJson(prev2Day, prevDay)
+    if(confirm('Doriți să folosiți zile de referință?')) {
+      useReferenceDays = true;
+      document.getElementById("step3").hidden = false;
+      generateLast2DaysSchedule();
+      document.getElementById("last2DayDayShiftTxt").value = "";
+      document.getElementById("last2DayNightShiftTxt").value = "";
+      document.getElementById("lastDayDayShiftTxt").value = "";
+      document.getElementById("lastDayNightShiftTxt").value = "";
+    } else {
+      useReferenceDays = false;
+      document.getElementById("step3").hidden = true;
+    }
+
     startDateTxt.disabled = true;
     endDateTxt.disabled = true;
     confirmScheduleBtn.disabled = true;
@@ -199,6 +211,7 @@ function confirmSchedule() {
     document.getElementById("step1").style="background-color: #dddddd";
     document.getElementById("step2").style="";
     document.getElementById("employeeTblDiv").style="opacity: 1";
+    document.getElementById("step5").hidden=false;
   } else {
     startDate = '';
     endDate = ''
@@ -207,23 +220,9 @@ function confirmSchedule() {
   }
 
    generateScheduleTable();
-
-  if (confirm('Doriti să folosiți zile de referință?')) {
-    document.getElementById("step3").hidden = false;
-    let dayJsonFirstEntry = Object.entries(dayJson)[0][0];
-    let prevDay = new Date(getParsedDate(dayJsonFirstEntry)).addDays(-1)
-    let prev2Day = new Date(getParsedDate(dayJsonFirstEntry)).addDays(-2)
-
-    last2Days = generateEmptyScheduleJson(prev2Day, prevDay)
-    useReferenceDays = true;
-    generateLast2DaysSchedule();
-  } else {
-    useReferenceDays = false;
-    document.getElementById("step3").hidden = true;
-  }
 }
 
-/** Enables HTML elements for STEP1 */
+/** Page actions for when the Edit button is clicked in the STEP1 section. */
 function editSchedule() {
   document.getElementById("dataInceputTxt").disabled = false;
   document.getElementById("dataSfarsitTxt").disabled = false;
@@ -243,8 +242,9 @@ function editSchedule() {
   document.getElementById("employeeTblDiv").style="opacity: 0.5";
 }
 
-/** Disables HTML elements for STEP2 */
+/** Page actions for when the Confirm button is clicked in the STEP2 section. */
 function confirmEmployees() {
+  console.log(last2Days);
   if (Object.keys(employeeObject) == 0) {
     alert("Introduceți cel puțin un angajat.")
   } else {
@@ -275,6 +275,11 @@ function confirmEmployees() {
     if (useReferenceDays) {
       document.getElementById("confirmLast2DaysBtn").disabled = false;
       document.getElementById("step3").style = "";
+      document.getElementById("last2DaysTblDiv").style = "opacity: 1";
+      document.getElementById("last2DayDayShiftTxt").disabled = false;
+      document.getElementById("last2DayNightShiftTxt").disabled = false;
+      document.getElementById("lastDayDayShiftTxt").disabled = false;
+      document.getElementById("lastDayNightShiftTxt").disabled = false;
     } else {
       document.getElementById("step4").style = "";
       document.getElementById("confirmDatesUnavailableBtn").disabled = false;
@@ -285,7 +290,7 @@ function confirmEmployees() {
   }
 }
 
-/** Enables HTML elements for STEP2 */
+/** Page actions for when the Edit button is clicked in the STEP2 section. */
 function editEmployees() {
   document.getElementById("empFullNameTxt").disabled = false;
   document.getElementById("addEmpNameBtn").disabled = false;
@@ -305,20 +310,58 @@ function editEmployees() {
   document.getElementById("employeeTblDiv").style="opacity: 1";
 }
 
+/** Page actions for when the Confirm button is clicked in the STEP3 section. */
 function confirmLast2Days() {
+  console.log(last2Days);
+  let last2DayDayShiftTxt = document.getElementById("last2DayDayShiftTxt");
+  let last2DayNightShiftTxt = document.getElementById("last2DayNightShiftTxt");
+  let lastDayDayShiftTxt = document.getElementById("lastDayDayShiftTxt");
+  let lastDayNightShiftTxt = document.getElementById("lastDayNightShiftTxt");
+  let last2DaysTable = document.getElementById("last2DaysTbl");
+  let firstRow = last2DaysTable.rows[0];
+  let last2Day = firstRow.cells[1].innerHTML;
+  let lastDay = firstRow.cells[2].innerHTML;
+  
+  console.log(last2Days);
+  last2Days[last2Day][DAY] = last2DayDayShiftTxt.value;
+  last2Days[last2Day][NIGHT] = last2DayNightShiftTxt.value;
+  last2Days[lastDay][DAY] = lastDayDayShiftTxt.value;
+  last2Days[lastDay][NIGHT] = lastDayNightShiftTxt.value;
+  console.log(last2Days);
+
   document.getElementById("confirmLast2DaysBtn").disabled = true;
-  document.getElementById("step3").style="background-color: #dddddd;";
-  document.getElementById("step4").style="";
+  document.getElementById("editLast2DaysBtn").disabled = false;
   document.getElementById("confirmDatesUnavailableBtn").disabled = false;
   document.getElementById("addEmpDatesUnavailableBtn").disabled = false;
   document.getElementById("empDateUnavailableTxt").disabled = false;
   document.getElementById("empListSelect").disabled = false;
+  document.getElementById("last2DaysTblDiv").style = "opacity: 0.5";
+  document.getElementById("step3").style="background-color: #dddddd;";
+  document.getElementById("step4").style="";
+  last2DayDayShiftTxt.disabled = true;
+  last2DayNightShiftTxt.disabled = true;
+  lastDayDayShiftTxt.disabled = true;
+  lastDayNightShiftTxt.disabled = true;
+  
 }
 
+/** Page actions for when the Edit button is clicked in the STEP3 section. */
 function editLast2Days() {
-
+  document.getElementById("confirmLast2DaysBtn").disabled = false;
+  document.getElementById("editLast2DaysBtn").disabled = true;
+  document.getElementById("last2DaysTblDiv").style = "opacity: 1";
+  document.getElementById("last2DayDayShiftTxt").disabled = false;
+  document.getElementById("last2DayNightShiftTxt").disabled = false;
+  document.getElementById("lastDayDayShiftTxt").disabled = false;
+  document.getElementById("lastDayNightShiftTxt").disabled = false;
+  document.getElementById("step1").style="background-color: #dddddd";
+  document.getElementById("step2").style="background-color: #dddddd";
+  document.getElementById("step3").style="";
+  document.getElementById("step4").style="background-color: #dddddd";
+  document.getElementById("step5").style="background-color: #dddddd";
 }
 
+/** Page actions for when the Confirm button is clicked in the STEP4 section. */
 function confirmDatesUnavailable() {
   document.getElementById("addEmpDatesUnavailableBtn").disabled = true;
   document.getElementById("empDateUnavailableTxt").disabled = true;
@@ -328,9 +371,10 @@ function confirmDatesUnavailable() {
   document.getElementById("generateScheduleBtn").disabled = false;
   document.getElementById("step4").style="background-color: #dddddd;";
   document.getElementById("step5").style="";
-  document.getElementById("employeeTblDiv").style="opacity: 0.5";
+  document.getElementById("scheduleTblDiv").style="opacity: 1";
 }
 
+/** Page actions for when the Edit button is clicked in the STEP4 section. */
 function editDatesUnavailable() {
   document.getElementById("addEmpDatesUnavailableBtn").disabled = false;
   document.getElementById("empDateUnavailableTxt").disabled = false;

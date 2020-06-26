@@ -16,11 +16,11 @@
             <div>
                 <h3 align="center"> Selectare Perioadă </h3>
                 <div style="float: left;">
-                    <input type="text" id="dataInceputTxt" name="dataInceputTxt" placeholder="15.03.2020">
+                    <input type="text" id="dataInceputTxt" name="dataInceputTxt" placeholder="ex: 15.03.2020">
                     <label for="dataInceputTxt">Dată Început:</label>
                 </div>
                 <div style="float: left;">
-                    <input type="text" id="dataSfarsitTxt" name="dataSfarsitTxt" placeholder="30.03.2020">
+                    <input type="text" id="dataSfarsitTxt" name="dataSfarsitTxt" placeholder="ex:  30.03.2020">
                     <label for="dataSfarsitTxt">Dată Sfârșit:</label>
                 </div>
             </div>
@@ -47,6 +47,7 @@
                     Salvează
                 </button>
             </div>
+            <br>
             <div id="employeeTblDiv" style="padding: 10px; opacity: 0.5;" align="center">
                 <table id="employeeTbl" name="employeeTbl" style="background-color: #f1f369">
                     <thead>
@@ -73,7 +74,7 @@
         </div>
         <hr>
         <!-- STEP 3: ADD LAST 2 DAYS OF SCHEDULE -->
-        <div id="step3" style="background-color: #dddddd">
+        <div id="step3" style="background-color: #dddddd" hidden="true">
             <h3 align="center"> Zile Referință </h3>
             <div style="padding: 3px;">
                 <div id="last2DaysTblDiv" style="padding-top: 15px; opacity: 0.5;" align="center">
@@ -81,29 +82,29 @@
                         <tbody>
                             <tr>
                                 <td>Data</td>
-                                <td></td>
-                                <td></td>
+                                <td>-</td>
+                                <td>-</td>
                             </tr>
                             <tr>
                                 <td>Zi</td>
                                 <td>
-                                    <input type="text" id="last2DayDayShift" name="last2DayDayShift"
-                                        placeholder="Florin Piersic" style="position: inherit;">
+                                    <input type="text" id="last2DayDayShiftTxt" name="last2DayDayShiftTxt"
+                                        placeholder="ex: Florin Piersic" style="position: inherit;" disabled="true">
                                 </td>
                                 <td>
-                                    <input type="text" id="lastDayDayShift" name="lastDayDayShift" placeholder="Florin Piersic"
-                                        style="position: inherit;">
+                                    <input type="text" id="lastDayDayShiftTxt" name="lastDayDayShiftTxt" placeholder="ex: Florin Piersic"
+                                        style="position: inherit;" disabled="true">
                                 </td>
                             </tr>
                             <tr>
                                 <td>Noapte</td>
                                 <td>
-                                    <input type="text" id="last2DayNightShift" name="last2DayNightShift"
-                                        placeholder="Florin Piersic" style="position: inherit;">
+                                    <input type="text" id="last2DayNightShiftTxt" name="last2DayNightShiftTxt"
+                                        placeholder="ex: Florin Piersic" style="position: inherit;" disabled="true">
                                 </td>
                                 <td>
-                                    <input type="text" id="lastDayNightShift" name="lastDayNightShift"
-                                        placeholder="Florin Piersic" style="position: inherit;">
+                                    <input type="text" id="lastDayNightShiftTxt" name="lastDayNightShiftTxt"
+                                        placeholder="ex: Florin Piersic" style="position: inherit;" disabled="true">
                                 </td>
                             </tr>
                         </tbody>
@@ -152,12 +153,12 @@
         </div>
         <hr>
         <!-- STEP 5: GENERATE SCHEDULE -->
-        <div id="step5" style="background-color: #dddddd">
+        <div id="step5" style="background-color: #dddddd" hidden=true;>
             <h3 align="center"> Program </h3>
             <div style="padding: 10px;">
                 <button type="button" id="generateScheduleBtn" name="generateScheduleBtn" disabled="true"
                     onclick="generateSchedule()">
-                    Generează Program
+                    Calculează
                 </button>
             </div>
             <div id="scheduleTblDiv" style="padding-top: 15px; opacity: 0.5;">
