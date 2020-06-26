@@ -14,7 +14,8 @@ let startDate = '';
 let endDate = '';
 let selectedEmpTblRow = null;
 let selectedEmpTblName = '';
-let useReferenceDays = true;
+let useReferenceDays = false;
+let modifiedReferenceDays = false;
 
 /*
     HTML FUNCTIONS
@@ -208,7 +209,6 @@ function confirmSchedule() {
     startDateTxt.value = '';
     endDateTxt.value = '';
   }
-
    updateScheduleTable();
 }
 
@@ -343,6 +343,7 @@ function confirmLast2Days() {
 
 /** Page actions for when the Edit button is clicked in the STEP3 section. */
 function editLast2Days() {
+  modifiedReferenceDays = true;
   document.getElementById("confirmLast2DaysBtn").disabled = false;
   document.getElementById("editLast2DaysBtn").disabled = true;
   document.getElementById("last2DaysTblDiv").style = "opacity: 1";
@@ -413,6 +414,10 @@ function computeSchedule(newSchedule) {
       scheduleRemainingDays(newSchedule, workday, dayShift, nightShift, prevDay2, prevDay, currentDay);
     }
   });
+
+  if (modifiedReferenceDays) {
+    modifiedReferenceDays = false;
+  }
   return newSchedule;
 }
 
@@ -725,10 +730,10 @@ function scheduleNightShiftSecondDay(newSchedule, workday, prevDay, currentDay) 
 
 /** Generates the employee schedule for the remaining days. */
 function scheduleRemainingDays(newSchedule, workday, dayShift, nightShift, prevDay2, prevDay, currentDay) {
-  if (dayShift == '' || dayShift == undefined) {
+  if (dayShift == '' || dayShift == undefined || modifiedReferenceDays) {
     scheduleDayShiftRemainingDays(newSchedule, workday, prevDay, prevDay2);
   }
-  if (nightShift == '' || nightShift == undefined) {
+  if (nightShift == '' || nightShift == undefined || modifiedReferenceDays) {
     scheduleNightShiftRemainingDays(newSchedule, workday, prevDay2, prevDay, currentDay);
   }
 }
