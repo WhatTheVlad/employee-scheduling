@@ -4,7 +4,7 @@
 const DAY = 'day';
 const NIGHT = 'night';
 const months = ['Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie', 'Iulie', 'August', 'Septembrie', 'Octombrie', 'Noiembrie', 'Decembrie'];
-const employeeObject = {};
+let employeeObject = {};
 let dayJson = {};
 let last2Days = {};
 let empNameAndShiftSorted = new Map();
@@ -16,6 +16,7 @@ let selectedEmpTblRow = null;
 let selectedEmpTblName = '';
 let useReferenceDays = false;
 let modifiedReferenceDays = false;
+let modifiedEmployees = false;
 
 /*
     HTML FUNCTIONS
@@ -33,8 +34,7 @@ function addEmployee() {
   } else {
     if (selectedEmpTblRow != null) {
       selectedEmpTblRow.cells[0].innerHTML = empName;
-      updateEmployeesObjectKey(employeeObject, selectedEmpTblName, empName)
-      updateEmployeeTable();
+      employeeObject = updateObjectKey(selectedEmpTblName, empName, employeeObject);
       selectedEmpTblRow = null;
       selectedEmpTblName = '';
     } else {
@@ -42,8 +42,8 @@ function addEmployee() {
         datesUnavailable: [],
         totalShifts: 0
       }
-      updateEmployeeTable();
     }
+    updateEmployeeTable();
   }
   document.getElementById("empFullNameTxt").value = "";
 }
@@ -280,6 +280,7 @@ function confirmEmployees() {
 
 /** Page actions for when the Edit button is clicked in the STEP2 section. */
 function editEmployees() {
+  modifiedEmployees = true;
   document.getElementById("empFullNameTxt").disabled = false;
   document.getElementById("addEmpNameBtn").disabled = false;
   document.getElementById("confirmEmployeesBtn").disabled = false;
@@ -450,14 +451,20 @@ function checkNightShiftAvailability(employee, currentDay, prevDay, prevDay2) {
 
 /** Sets the total number of shifts each employee must work, according to the requested timeline. */
 function setEmployeeTotalShifts(dayJson, employeeObject) {
-    let totalRequiredShifts = Object.keys(dayJson).length * 2;
-    let numberOfEmployees = Object.keys(employeeObject).length;
-    minimumShifts = Math.floor(totalRequiredShifts / numberOfEmployees);
-    remainingShifts = totalRequiredShifts - (numberOfEmployees * minimumShifts);
+  let totalRequiredShifts = 0;
+  let numberOfEmployees = Object.keys(employeeObject).length;
 
-    setEmployeeMinimumShifts(employeeObject, minimumShifts);
-    setEmployeeRemainingShifts(employeeObject, remainingShifts);
-    updateEmployeeTable();
+  if (useReferenceDays) {
+    totalRequiredShifts = (Object.keys(dayJson).length - 2) * 2;
+  } else {
+    totalRequiredShifts = Object.keys(dayJson).length * 2;
+  }
+  minimumShifts = Math.floor(totalRequiredShifts / numberOfEmployees);
+  remainingShifts = totalRequiredShifts - (numberOfEmployees * minimumShifts);
+
+  setEmployeeMinimumShifts(employeeObject, minimumShifts);
+  setEmployeeRemainingShifts(employeeObject, remainingShifts);
+  updateEmployeeTable();
 }
 
 /** Sets the minimum number of shifts an employee must work, according to the requested timeline. */
@@ -662,10 +669,10 @@ function isEmployeeAvailable(workday, employee, employeeObject) {
 
 /** Generates the employee schedule for the first day. */
 function scheduleFirstDay(newSchedule, workday, dayShift, nightShift, currentDay) {
-  if (dayShift == '' || dayShift == undefined) {
+  if (dayShift == '' || dayShift == undefined || (modifiedEmployees && !useReferenceDays)) {
     scheduleDayShiftFirstDay(newSchedule, workday, currentDay);
   }
-  if (nightShift == '' || nightShift == undefined) {
+  if (nightShift == '' || nightShift == undefined || (modifiedEmployees && !useReferenceDays)) {
     scheduleNightShiftFirstDay(newSchedule, workday, currentDay);
   } 
 }
@@ -696,10 +703,10 @@ function scheduleNightShiftFirstDay(newSchedule, workday, currentDay) {
 
 /** Generates the employee schedule for the second day. */
 function scheduleSecondDay(newSchedule, workday, dayShift, nightShift, prevDay, currentDay) {
-  if (dayShift == '' || dayShift == undefined) {
+  if (dayShift == '' || dayShift == undefined || (modifiedEmployees && !useReferenceDays)) {
     scheduleDayShiftSecondDay(newSchedule, workday, prevDay, currentDay);
   }
-  if (nightShift == '' || nightShift == undefined) {
+  if (nightShift == '' || nightShift == undefined || (modifiedEmployees && !useReferenceDays)) {
     scheduleNightShiftSecondDay(newSchedule, workday, prevDay, currentDay);
   }
 }
@@ -730,10 +737,10 @@ function scheduleNightShiftSecondDay(newSchedule, workday, prevDay, currentDay) 
 
 /** Generates the employee schedule for the remaining days. */
 function scheduleRemainingDays(newSchedule, workday, dayShift, nightShift, prevDay2, prevDay, currentDay) {
-  if (dayShift == '' || dayShift == undefined || modifiedReferenceDays) {
+  if (dayShift == '' || dayShift == undefined || modifiedReferenceDays || modifiedEmployees) {
     scheduleDayShiftRemainingDays(newSchedule, workday, prevDay, prevDay2);
   }
-  if (nightShift == '' || nightShift == undefined || modifiedReferenceDays) {
+  if (nightShift == '' || nightShift == undefined || modifiedReferenceDays || modifiedEmployees) {
     scheduleNightShiftRemainingDays(newSchedule, workday, prevDay2, prevDay, currentDay);
   }
 }
@@ -863,6 +870,21 @@ function checkMonthInDate(date) {
   } else {
     return true
   }
+}
+
+/** Changes an old key with a new one, returning a new object with keys in the same order. */
+function updateObjectKey(oldValue, newValue, obj) {
+  let entryKeys =  Object.keys(obj);
+  let entryValues = Object.values(obj);
+  let indexOfOldValue = entryKeys.indexOf(oldValue)
+  let newObj = {};
+  entryKeys[indexOfOldValue] = newValue;
+
+  for(i = 0; i < entryKeys.length; i++) {
+    newObj[entryKeys[i]] = entryValues[i];
+  };
+
+  return newObj
 }
 
 /*
