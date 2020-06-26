@@ -1,8 +1,8 @@
 /*
     APP VARIABLES
 */
-const DAY = "day";
-const NIGHT = "night";
+const DAY = 'day';
+const NIGHT = 'night';
 const months = ['Ianuarie', 'Februarie', 'Martie', 'Aprilie', 'Mai', 'Iunie', 'Iulie', 'August', 'Septembrie', 'Octombrie', 'Noiembrie', 'Decembrie'];
 const employeeObject = {};
 let dayJson = {};
@@ -74,7 +74,7 @@ function addDatesUnavailable() {
 function generateSchedule() {
   sortEmployeesByNumerOfShifts(employeeObject);
   computeSchedule(dayJson);
-  generateScheduleTable();
+  updateScheduleTable();
   testSchedule(dayJson);
 }
 
@@ -118,7 +118,7 @@ function deleteEmpTableRow(td) {
 }
 
 /** Fills schedule table with the generated schedule. */
-function generateScheduleTable(){
+function updateScheduleTable(){
   let scheduleTable = document.getElementById("scheduleTbl");
   let oldTbody = scheduleTable.tBodies[0];
   let newTbody = document.createElement('tbody');
@@ -128,22 +128,9 @@ function generateScheduleTable(){
   let headerFirstRow = dateRow.insertCell(-1);
   let headerSecondRow = dayShiftRow.insertCell(-1);
   let headerThirdRow = nightShiftRow.insertCell(-1);
-  let last2DaysEntries = Object.entries(last2Days);
   headerFirstRow.innerHTML = 'Data';
   headerSecondRow.innerHTML = 'Zi';
   headerThirdRow.innerHTML = 'Noapte'
-  
-  if(last2DaysEntries.length > 0) {
-    last2DaysEntries.map(ele => {
-      let dateCell = dateRow.insertCell(-1);
-      let dayShiftCell = dayShiftRow.insertCell(-1);
-      let nightShiftCell = nightShiftRow.insertCell(-1);
-  
-      dateCell.innerHTML = ele[0];
-      dayShiftCell.innerHTML = 'emp1';
-      nightShiftCell.innerHTML = 'emp2';
-    })
-  }
   
   Object.entries(dayJson).map(ele => {
     let dateCell = dateRow.insertCell(-1);
@@ -151,8 +138,8 @@ function generateScheduleTable(){
     let nightShiftCell = nightShiftRow.insertCell(-1);
 
     dateCell.innerHTML = ele[0];
-    dayShiftCell.innerHTML = ele[1]['day'];
-    nightShiftCell.innerHTML = ele[1]['night'];
+    dayShiftCell.innerHTML = ele[1][DAY];
+    nightShiftCell.innerHTML = ele[1][NIGHT];
   })
 
   oldTbody.parentNode.replaceChild(newTbody, oldTbody);
@@ -184,19 +171,18 @@ function confirmSchedule() {
     startDate = startDateTxt.value;
     endDate = endDateTxt.value;
     dayJson = generateEmptyScheduleJson(getParsedDate(startDate), getParsedDate(endDate));
-    let dayJsonFirstEntry = Object.entries(dayJson)[0][0];
-    let prevDay = new Date(getParsedDate(dayJsonFirstEntry)).addDays(-1)
-    let prev2Day = new Date(getParsedDate(dayJsonFirstEntry)).addDays(-2)
-    last2Days = generateEmptyScheduleJson(prev2Day, prevDay)
     if(confirm('Doriți să folosiți zile de referință?')) {
+      let dayJsonFirstEntry = Object.entries(dayJson)[0][0];
+      let prevDay = new Date(getParsedDate(dayJsonFirstEntry)).addDays(-1);
+      let prev2Day = new Date(getParsedDate(dayJsonFirstEntry)).addDays(-2);
+
+      last2Days = generateEmptyScheduleJson(prev2Day, prevDay);
+      dayJson = generateEmptyScheduleJson(prev2Day, getParsedDate(endDate));
       useReferenceDays = true;
       document.getElementById("step3").hidden = false;
       generateLast2DaysSchedule();
-      document.getElementById("last2DayDayShiftTxt").value = "";
-      document.getElementById("last2DayNightShiftTxt").value = "";
-      document.getElementById("lastDayDayShiftTxt").value = "";
-      document.getElementById("lastDayNightShiftTxt").value = "";
     } else {
+      last2Days = {};
       useReferenceDays = false;
       document.getElementById("step3").hidden = true;
     }
@@ -212,6 +198,10 @@ function confirmSchedule() {
     document.getElementById("step2").style="";
     document.getElementById("employeeTblDiv").style="opacity: 1";
     document.getElementById("step5").hidden=false;
+    document.getElementById("last2DayDayShiftTxt").value = "";
+    document.getElementById("last2DayNightShiftTxt").value = "";
+    document.getElementById("lastDayDayShiftTxt").value = "";
+    document.getElementById("lastDayNightShiftTxt").value = "";
   } else {
     startDate = '';
     endDate = ''
@@ -219,7 +209,7 @@ function confirmSchedule() {
     endDateTxt.value = '';
   }
 
-   generateScheduleTable();
+   updateScheduleTable();
 }
 
 /** Page actions for when the Edit button is clicked in the STEP1 section. */
@@ -244,7 +234,6 @@ function editSchedule() {
 
 /** Page actions for when the Confirm button is clicked in the STEP2 section. */
 function confirmEmployees() {
-  console.log(last2Days);
   if (Object.keys(employeeObject) == 0) {
     alert("Introduceți cel puțin un angajat.")
   } else {
@@ -262,8 +251,7 @@ function confirmEmployees() {
       let option = document.createElement("option");
       option.appendChild(document.createTextNode(empName));
       empListSelect.appendChild(option);
-    }
-    )
+    })
 
     document.getElementById("empFullNameTxt").disabled = true;
     document.getElementById("addEmpNameBtn").disabled = true;
@@ -312,37 +300,45 @@ function editEmployees() {
 
 /** Page actions for when the Confirm button is clicked in the STEP3 section. */
 function confirmLast2Days() {
-  console.log(last2Days);
   let last2DayDayShiftTxt = document.getElementById("last2DayDayShiftTxt");
   let last2DayNightShiftTxt = document.getElementById("last2DayNightShiftTxt");
   let lastDayDayShiftTxt = document.getElementById("lastDayDayShiftTxt");
   let lastDayNightShiftTxt = document.getElementById("lastDayNightShiftTxt");
   let last2DaysTable = document.getElementById("last2DaysTbl");
-  let firstRow = last2DaysTable.rows[0];
-  let last2Day = firstRow.cells[1].innerHTML;
-  let lastDay = firstRow.cells[2].innerHTML;
-  
-  console.log(last2Days);
-  last2Days[last2Day][DAY] = last2DayDayShiftTxt.value;
-  last2Days[last2Day][NIGHT] = last2DayNightShiftTxt.value;
-  last2Days[lastDay][DAY] = lastDayDayShiftTxt.value;
-  last2Days[lastDay][NIGHT] = lastDayNightShiftTxt.value;
-  console.log(last2Days);
 
-  document.getElementById("confirmLast2DaysBtn").disabled = true;
-  document.getElementById("editLast2DaysBtn").disabled = false;
-  document.getElementById("confirmDatesUnavailableBtn").disabled = false;
-  document.getElementById("addEmpDatesUnavailableBtn").disabled = false;
-  document.getElementById("empDateUnavailableTxt").disabled = false;
-  document.getElementById("empListSelect").disabled = false;
-  document.getElementById("last2DaysTblDiv").style = "opacity: 0.5";
-  document.getElementById("step3").style="background-color: #dddddd;";
-  document.getElementById("step4").style="";
-  last2DayDayShiftTxt.disabled = true;
-  last2DayNightShiftTxt.disabled = true;
-  lastDayDayShiftTxt.disabled = true;
-  lastDayNightShiftTxt.disabled = true;
-  
+  if (
+    last2DayDayShiftTxt.value == '' ||
+    last2DayNightShiftTxt.value == '' ||
+    lastDayDayShiftTxt.value == '' ||
+    lastDayNightShiftTxt.value == ''
+  ) {
+    alert('Completați toate zilele de referință.')
+  } else {
+    let firstRow = last2DaysTable.rows[0];
+    let last2Day = firstRow.cells[1].innerHTML;
+    let lastDay = firstRow.cells[2].innerHTML;
+
+    dayJson[last2Day][DAY] = last2DayDayShiftTxt.value;
+    dayJson[last2Day][NIGHT] = last2DayNightShiftTxt.value;
+    dayJson[lastDay][DAY] = lastDayDayShiftTxt.value;
+    dayJson[lastDay][NIGHT] = lastDayNightShiftTxt.value;
+
+    document.getElementById("confirmLast2DaysBtn").disabled = true;
+    document.getElementById("editLast2DaysBtn").disabled = false;
+    document.getElementById("confirmDatesUnavailableBtn").disabled = false;
+    document.getElementById("addEmpDatesUnavailableBtn").disabled = false;
+    document.getElementById("empDateUnavailableTxt").disabled = false;
+    document.getElementById("empListSelect").disabled = false;
+    document.getElementById("last2DaysTblDiv").style = "opacity: 0.5";
+    document.getElementById("step3").style = "background-color: #dddddd;";
+    document.getElementById("step4").style = "";
+    last2DayDayShiftTxt.disabled = true;
+    last2DayNightShiftTxt.disabled = true;
+    lastDayDayShiftTxt.disabled = true;
+    lastDayNightShiftTxt.disabled = true;
+
+    updateScheduleTable();
+  }
 }
 
 /** Page actions for when the Edit button is clicked in the STEP3 section. */
@@ -408,7 +404,7 @@ function computeSchedule(newSchedule) {
     let currentDay = Object.entries(newSchedule)[workdayIndex];
     let prevDay = Object.entries(newSchedule)[workdayIndex - 1];
     let prevDay2 = Object.entries(newSchedule)[workdayIndex - 2];
-
+ 
     if (workdayIndex == 0) {
       scheduleFirstDay(newSchedule, workday, dayShift, nightShift, currentDay);
     } else if (workdayIndex == 1) {
@@ -666,7 +662,7 @@ function scheduleFirstDay(newSchedule, workday, dayShift, nightShift, currentDay
   }
   if (nightShift == '' || nightShift == undefined) {
     scheduleNightShiftFirstDay(newSchedule, workday, currentDay);
-  }
+  } 
 }
 
 /** Assigns the most suitable employee to work the day shift of the first day. */
@@ -873,6 +869,8 @@ function testSchedule(testSchedule) {
   let workdaysKeys = Object.keys(testSchedule);
   let dayShifts = [];
   let nightShifts = [];
+  let problemShiftsArray = [];
+  let problemShiftsUnique = [];
 
   Object.entries(testSchedule).map((element) => {
     let workday = element[0];
@@ -886,6 +884,7 @@ function testSchedule(testSchedule) {
     if (workdayIndex == 0) {
       if (dayShift == "") {
         console.log('ERROR: ' + workday + ' ' + DAY + ' shift = NOT COVERED');
+        problemShiftsArray.push(workday);
       } else {
         console.log(workday + ' ' + DAY + ' shift: ' + dayShift);
         dayShifts.push([workday, [DAY, dayShift]]);
@@ -893,9 +892,11 @@ function testSchedule(testSchedule) {
 
       if (nightShift == "") {
         console.log('ERROR: ' + workday + ' ' + NIGHT + ' shift = NOT COVERED');
+        problemShiftsArray.push(workday);
       } else {
         if (dayShift == nightShift) {
           console.log('ERROR: ' + workday + ' ' + NIGHT + ' shift = ' + nightShift + ' INCORRECT ASSIGNMENT');
+          problemShiftsArray.push(workday);
         } else {
           console.log(workday + ' ' + NIGHT + ' shift: ' + nightShift);
           nightShifts.push([workday, [NIGHT, nightShift]]);
@@ -904,9 +905,11 @@ function testSchedule(testSchedule) {
     } else if (workdayIndex == 1) {
       if (dayShift == "") {
         console.log('ERROR: ' + workday + ' ' + DAY + ' shift = NOT COVERED');
+        problemShiftsArray.push(workday);
       } else {
         if (Object.values(prevDay[1]).includes(dayShift)) {
           console.log('ERROR: ' + workday + ' ' + DAY + ' shift = ' + dayShift + ' INCORRECT ASSIGNMENT');
+          problemShiftsArray.push(workday);
         } else {
           console.log(workday + ' ' + DAY + ' shift: ' + dayShift);
           dayShifts.push([workday, [DAY, dayShift]]);
@@ -915,9 +918,11 @@ function testSchedule(testSchedule) {
 
       if (nightShift == "") {
         console.log('ERROR: ' + workday + ' ' + NIGHT + ' shift = NOT COVERED');
+        problemShiftsArray.push(workday);
       } else {
         if ([prevDay[1][NIGHT], currentDay[1][DAY]].includes(nightShift)) {
           console.log('ERROR: ' + workday + ' ' + NIGHT + ' shift = ' + nightShift + ' INCORRECT ASSIGNMENT');
+          problemShiftsArray.push(workday);
         } else {
           console.log(workday + ' ' + NIGHT + ' shift: ' + nightShift);
           nightShifts.push([workday, [NIGHT, nightShift]]);
@@ -926,9 +931,11 @@ function testSchedule(testSchedule) {
     } else {
       if (dayShift == "") {
         console.log('ERROR: ' + workday + ' ' + DAY + ' shift = NOT COVERED');
+        problemShiftsArray.push(workday);
       } else {
         if (!checkDayShiftAvailability(dayShift, prevDay, prevDay2)) {
           console.log('ERROR: ' + workday + ' ' + DAY + ' shift = ' + dayShift + ' INCORRECT ASSIGNMENT');
+          problemShiftsArray.push(workday);
         } else {
           console.log(workday + ' ' + DAY + ' shift: ' + dayShift);
           dayShifts.push([workday, [DAY, dayShift]]);
@@ -937,9 +944,11 @@ function testSchedule(testSchedule) {
 
       if (nightShift == "") {
         console.log('ERROR: ' + workday + ' ' + NIGHT + ' shift = NOT COVERED');
+        problemShiftsArray.push(workday);
       } else {
         if (!checkNightShiftAvailability(nightShift, currentDay, prevDay, prevDay2)) {
           console.log('ERROR: ' + workday + ' ' + NIGHT + ' shift = ' + nightShift + ' INCORRECT ASSIGNMENT');
+          problemShiftsArray.push(workday);
         } else {
           console.log(workday + ' ' + NIGHT + ' shift: ' + nightShift);
           nightShifts.push([workday, [NIGHT, nightShift]]);
@@ -948,6 +957,16 @@ function testSchedule(testSchedule) {
     }
   })
 
-  //console.log(dayShifts)
-  //console.log(nightShifts)
+  problemShiftsArray.map((workday) => {
+    if (!problemShiftsUnique.includes(workday)) {
+      problemShiftsUnique.push(workday);
+    }
+  });
+
+  if (problemShiftsUnique.length > 0) {
+    alert('Programul generat nu respectă regulile în vigoare. Verificați datele programului pentru urmatoarele zile: ' + problemShiftsUnique);
+  } else {
+    confirm('Programul a fost generat succes.');
+  }
+
 }
