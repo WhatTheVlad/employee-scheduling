@@ -17,6 +17,7 @@ let selectedEmpTblName = '';
 let useReferenceDays = false;
 let modifiedReferenceDays = false;
 let modifiedEmployees = false;
+let modifiedAbsences = false;
 
 /*
     HTML FUNCTIONS
@@ -46,6 +47,8 @@ function addEmployee() {
     updateEmployeeTable();
   }
   document.getElementById("empFullNameTxt").value = "";
+  document.getElementById("generateScheduleBtn").disabled = true;
+
 }
 
 /** Adds the dates for which an employee is unavailable */
@@ -68,6 +71,7 @@ function addDatesUnavailable() {
     alert('Introduceți una sau mai multe absențe');
   }
   document.getElementById("empDateUnavailableTxt").value = "";
+  document.getElementById("generateScheduleBtn").disabled = true;
   updateEmployeeTable();
 }
 
@@ -260,6 +264,9 @@ function confirmEmployees() {
     document.getElementById("editEmployeesBtn").disabled = false;
     document.getElementById("step2").style = "background-color: #dddddd";
     document.getElementById("employeeTblDiv").style = "opacity: 0.5";
+    if (modifiedEmployees) {
+      document.getElementById("generateScheduleBtn").disabled = true;
+    }
     if (useReferenceDays) {
       document.getElementById("confirmLast2DaysBtn").disabled = false;
       document.getElementById("step3").style = "";
@@ -361,6 +368,9 @@ function editLast2Days() {
 
 /** Page actions for when the Confirm button is clicked in the STEP4 section. */
 function confirmDatesUnavailable() {
+  if (modifiedAbsences) {
+    document.getElementById("generateScheduleBtn").disabled = true;
+  }
   document.getElementById("addEmpDatesUnavailableBtn").disabled = true;
   document.getElementById("empDateUnavailableTxt").disabled = true;
   document.getElementById("confirmDatesUnavailableBtn").disabled = true;
@@ -374,6 +384,7 @@ function confirmDatesUnavailable() {
 
 /** Page actions for when the Edit button is clicked in the STEP4 section. */
 function editDatesUnavailable() {
+  modifiedAbsences = true;
   document.getElementById("addEmpDatesUnavailableBtn").disabled = false;
   document.getElementById("empDateUnavailableTxt").disabled = false;
   document.getElementById("confirmDatesUnavailableBtn").disabled = false;
@@ -416,9 +427,10 @@ function computeSchedule(newSchedule) {
     }
   });
 
-  if (modifiedReferenceDays) {
-    modifiedReferenceDays = false;
-  }
+  modifiedReferenceDays = false;
+  modifiedAbsences = false
+  modifiedEmployees = false
+
   return newSchedule;
 }
 
@@ -669,10 +681,10 @@ function isEmployeeAvailable(workday, employee, employeeObject) {
 
 /** Generates the employee schedule for the first day. */
 function scheduleFirstDay(newSchedule, workday, dayShift, nightShift, currentDay) {
-  if (dayShift == '' || dayShift == undefined || (modifiedEmployees && !useReferenceDays)) {
+  if (dayShift == '' || dayShift == undefined || (modifiedEmployees && !useReferenceDays) || (modifiedAbsences && !useReferenceDays)) {
     scheduleDayShiftFirstDay(newSchedule, workday, currentDay);
   }
-  if (nightShift == '' || nightShift == undefined || (modifiedEmployees && !useReferenceDays)) {
+  if (nightShift == '' || nightShift == undefined || (modifiedEmployees && !useReferenceDays) || (modifiedAbsences && !useReferenceDays)) {
     scheduleNightShiftFirstDay(newSchedule, workday, currentDay);
   } 
 }
@@ -703,10 +715,10 @@ function scheduleNightShiftFirstDay(newSchedule, workday, currentDay) {
 
 /** Generates the employee schedule for the second day. */
 function scheduleSecondDay(newSchedule, workday, dayShift, nightShift, prevDay, currentDay) {
-  if (dayShift == '' || dayShift == undefined || (modifiedEmployees && !useReferenceDays)) {
+  if (dayShift == '' || dayShift == undefined || (modifiedEmployees && !useReferenceDays) || (modifiedAbsences && !useReferenceDays)) {
     scheduleDayShiftSecondDay(newSchedule, workday, prevDay, currentDay);
   }
-  if (nightShift == '' || nightShift == undefined || (modifiedEmployees && !useReferenceDays)) {
+  if (nightShift == '' || nightShift == undefined || (modifiedEmployees && !useReferenceDays) || (modifiedAbsences && !useReferenceDays)) {
     scheduleNightShiftSecondDay(newSchedule, workday, prevDay, currentDay);
   }
 }
@@ -737,10 +749,10 @@ function scheduleNightShiftSecondDay(newSchedule, workday, prevDay, currentDay) 
 
 /** Generates the employee schedule for the remaining days. */
 function scheduleRemainingDays(newSchedule, workday, dayShift, nightShift, prevDay2, prevDay, currentDay) {
-  if (dayShift == '' || dayShift == undefined || modifiedReferenceDays || modifiedEmployees) {
+  if (dayShift == '' || dayShift == undefined || modifiedReferenceDays || modifiedEmployees || modifiedAbsences) {
     scheduleDayShiftRemainingDays(newSchedule, workday, prevDay, prevDay2);
   }
-  if (nightShift == '' || nightShift == undefined || modifiedReferenceDays || modifiedEmployees) {
+  if (nightShift == '' || nightShift == undefined || modifiedReferenceDays || modifiedEmployees || modifiedAbsences) {
     scheduleNightShiftRemainingDays(newSchedule, workday, prevDay2, prevDay, currentDay);
   }
 }
