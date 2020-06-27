@@ -65,8 +65,6 @@ function addEmployee() {
 
   document.getElementById("empFullNameTxt").value = "";
   document.getElementById("empAbsencesTxt").value = "";
-  document.getElementById("generateScheduleBtn").disabled = true;
-
 }
 
 /** Adds the dates for which an employee is unavailable */
@@ -255,7 +253,6 @@ function editSchedule() {
   document.getElementById("step1").style="";
   document.getElementById("step2").style="background-color: #b1a8a2f6";
   document.getElementById("step3").style="background-color: #b1a8a2f6";
-  document.getElementById("step4").style="background-color: #b1a8a2f6";
   document.getElementById("employeeTblDiv").style="opacity: 0.5";
 }
 
@@ -274,9 +271,6 @@ function confirmEmployees() {
     document.getElementById("editEmployeesBtn").disabled = false;
     document.getElementById("step2").style = "background-color: #b1a8a2f6";
     document.getElementById("employeeTblDiv").style = "opacity: 0.5";
-    if (modifiedEmployees) {
-      document.getElementById("generateScheduleBtn").disabled = true;
-    }
     if (useReferenceDays) {
       document.getElementById("confirmLast2DaysBtn").disabled = false;
       document.getElementById("step3").style = "";
@@ -286,8 +280,6 @@ function confirmEmployees() {
       document.getElementById("lastDayDayShiftTxt").disabled = false;
       document.getElementById("lastDayNightShiftTxt").disabled = false;
     } else {
-      document.getElementById("step4").style = "";
-      document.getElementById("step4").hidden = false;
       document.getElementById("generateScheduleBtn").disabled = false;
       document.getElementById("scheduleTblDiv").style = "opacity: 1";
       
@@ -308,7 +300,6 @@ function editEmployees() {
   document.getElementById("step1").style="background-color: #b1a8a2f6";
   document.getElementById("step2").style="";
   document.getElementById("step3").style="background-color: #b1a8a2f6";
-  document.getElementById("step4").style="background-color: #b1a8a2f6";
   document.getElementById("employeeTblDiv").style="opacity: 1";
 }
 
@@ -367,7 +358,6 @@ function editLast2Days() {
   document.getElementById("step1").style="background-color: #b1a8a2f6";
   document.getElementById("step2").style="background-color: #b1a8a2f6";
   document.getElementById("step3").style="";
-  document.getElementById("step4").style="background-color: #b1a8a2f6";
 }
 
 /** Reloads page */
@@ -893,7 +883,7 @@ function testSchedule(testSchedule) {
     let prevDay2 = Object.entries(testSchedule)[workdayIndex - 2];
 
     if (workdayIndex == 0) {
-      if (dayShift == "") {
+      if (dayShift == "" || dayShift == undefined) {
         console.log('ERROR: ' + workday + ' ' + DAY + ' shift = NOT COVERED');
         problemShiftsArray.push(workday);
       } else {
@@ -901,7 +891,7 @@ function testSchedule(testSchedule) {
         dayShifts.push([workday, [DAY, dayShift]]);
       }
 
-      if (nightShift == "") {
+      if (nightShift == "" || nightShift == undefined) {
         console.log('ERROR: ' + workday + ' ' + NIGHT + ' shift = NOT COVERED');
         problemShiftsArray.push(workday);
       } else {
@@ -914,7 +904,7 @@ function testSchedule(testSchedule) {
         }
       }
     } else if (workdayIndex == 1) {
-      if (dayShift == "") {
+      if (dayShift == "" || dayShift == undefined) {
         console.log('ERROR: ' + workday + ' ' + DAY + ' shift = NOT COVERED');
         problemShiftsArray.push(workday);
       } else {
@@ -927,7 +917,7 @@ function testSchedule(testSchedule) {
         }
       }
 
-      if (nightShift == "") {
+      if (nightShift == "" || nightShift == undefined) {
         console.log('ERROR: ' + workday + ' ' + NIGHT + ' shift = NOT COVERED');
         problemShiftsArray.push(workday);
       } else {
@@ -940,7 +930,7 @@ function testSchedule(testSchedule) {
         }
       }
     } else {
-      if (dayShift == "") {
+      if (dayShift == "" || dayShift == undefined) {
         console.log('ERROR: ' + workday + ' ' + DAY + ' shift = NOT COVERED');
         problemShiftsArray.push(workday);
       } else {
@@ -953,7 +943,7 @@ function testSchedule(testSchedule) {
         }
       }
 
-      if (nightShift == "") {
+      if (nightShift == "" || nightShift == undefined) {
         console.log('ERROR: ' + workday + ' ' + NIGHT + ' shift = NOT COVERED');
         problemShiftsArray.push(workday);
       } else {
