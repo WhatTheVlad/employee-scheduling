@@ -27,52 +27,72 @@ let modifiedAbsences = false;
 //TODO: add check for empty string
 function addEmployee() {
   let empName = document.getElementById("empFullNameTxt").value;
+  let isNewEmployee = true;
 
-  if (empName == "" || empName == " ") {
+  if (Object.keys(employeeObject).includes(empName)) {
+    isNewEmployee = false;
+  }
+
+  if (empName == '' || empName == ' ') {
     alert("Completați câmpul ”Nume Angajat”")
-  } else if (Object.keys(employeeObject).includes(empName)) {
-    alert('Exista deja un angajat cu numele ' + empName);
   } else {
     if (selectedEmpTblRow != null) {
       selectedEmpTblRow.cells[0].innerHTML = empName;
-      employeeObject = updateObjectKey(selectedEmpTblName, empName, employeeObject);
-      selectedEmpTblRow = null;
-      selectedEmpTblName = '';
+      if (empName != selectedEmpTblName) {
+        employeeObject = updateObjectKey(selectedEmpTblName, empName, employeeObject);
+        selectedEmpTblRow = null;
+        selectedEmpTblName = '';
+      } else {
+        let overwriteAbsences = true;
+        addAbsences(overwriteAbsences);
+        selectedEmpTblRow = null;
+        selectedEmpTblName = '';
+      }
     } else {
-      employeeObject[empName] = {
-        datesUnavailable: [],
-        totalShifts: 0
+      if (isNewEmployee) {
+        employeeObject[empName] = {
+          datesUnavailable: [],
+          totalShifts: 0
+        }
+        addAbsences();
+      } else {
+        addAbsences();
       }
     }
-    updateEmployeeTable();
   }
+
+  updateEmployeeTable();
+
   document.getElementById("empFullNameTxt").value = "";
+  document.getElementById("empAbsencesTxt").value = "";
   document.getElementById("generateScheduleBtn").disabled = true;
 
 }
 
 /** Adds the dates for which an employee is unavailable */
 //TODO: add check for empty string
-function addDatesUnavailable() {
-  let empName = document.getElementById("empListSelect").value;
-  let empDateUnavailableTxt = document.getElementById("empDateUnavailableTxt").value
-  let newDateUnavailable = empDateUnavailableTxt.replace(/ /g, "").split(',');
-  let currentDatesUnavailable = employeeObject[empName]['datesUnavailable'];
+function addAbsences(overwriteAbsences = false) {
+  let empFullNameTxt = document.getElementById("empFullNameTxt");
+  let empName = empFullNameTxt.value;
+  let empAbsences = document.getElementById("empAbsencesTxt").value
+  let newAbsence = empAbsences.replace(/ /g, "").split(',');
+  if (overwriteAbsences) {
+    employeeObject[empName]['datesUnavailable'] = [];
+  }
+  let currentAbsences = employeeObject[empName]['datesUnavailable'];
 
-  if (empDateUnavailableTxt != '') {
-    newDateUnavailable.forEach(date => {
-      if (!currentDatesUnavailable.includes(date)) {
-        currentDatesUnavailable.push(date);
+  if (empAbsences != '' && empAbsences != ' ') {
+    newAbsence.forEach(date => {
+      if (!currentAbsences.includes(date)) {
+        currentAbsences.push(date);
       } else {
         alert('Data ' + date + ' este deja înregistrată pentru ' + empName)
       }
     })
-  } else {
-    alert('Introduceți una sau mai multe absențe');
   }
-  document.getElementById("empDateUnavailableTxt").value = "";
+
+  empName = "";
   document.getElementById("generateScheduleBtn").disabled = true;
-  updateEmployeeTable();
 }
 
 /** Generates the schedule with the available user data. */
@@ -95,12 +115,12 @@ function updateEmployeeTable(){
     let newRow = newTbody.insertRow(-1);
     let empNameCell = newRow.insertCell(-1);
     let empTotalShiftsCell = newRow.insertCell(-1);
-    let empDatesUnavailableCell = newRow.insertCell(-1);
+    let empAbsencesCell = newRow.insertCell(-1);
     let editCell = newRow.insertCell(-1);
 
     editCell.innerHTML = '<button type="button" id="editTblEmpBtn' + indexOfEmp + '" name="editTblEmpBtn' + indexOfEmp + '" onClick="editEmpTableRow(this)" class="tableButton">Modifică</button> <button type="button" id="deleteTblEmpBtn' + indexOfEmp + '" name="deleteTblEmpBtn' + indexOfEmp + '" onClick="deleteEmpTableRow(this)" class="tableButton">Șterge</button>';
     empNameCell.innerHTML = emp[0];
-    empDatesUnavailableCell.innerHTML = emp[1]['datesUnavailable'];
+    empAbsencesCell.innerHTML = emp[1]['datesUnavailable'];
     empTotalShiftsCell.innerHTML = emp[1]['totalShifts']
   })
   oldTbody.parentNode.replaceChild(newTbody, oldTbody);
@@ -110,6 +130,7 @@ function updateEmployeeTable(){
 function editEmpTableRow(td) {
   selectedEmpTblRow = td.parentNode.parentNode;
   document.getElementById("empFullNameTxt").value = selectedEmpTblRow.cells[0].innerHTML;
+  document.getElementById("empAbsencesTxt").value = selectedEmpTblRow.cells[2].innerHTML;
   selectedEmpTblName = selectedEmpTblRow.cells[0].innerHTML;
 }
 
@@ -169,7 +190,8 @@ function confirmSchedule() {
   let confirmScheduleBtn = document.getElementById("confirmScheduleBtn");
   let editScheduleBtn = document.getElementById("editScheduleBtn");
   let empFullNameTxt = document.getElementById("empFullNameTxt");
-  let addEmpNameBtn = document.getElementById("addEmpNameBtn");
+  let empAbsencesTxt = document.getElementById("empAbsencesTxt");
+  let addEmpBtn = document.getElementById("addEmpBtn");
   let confirmEmployeesBtn = document.getElementById("confirmEmployeesBtn");
 
   if (validateDates(startDateTxt.value, endDateTxt.value)) {
@@ -197,16 +219,19 @@ function confirmSchedule() {
     confirmScheduleBtn.disabled = true;
     editScheduleBtn.disabled = false;
     empFullNameTxt.disabled = false;
-    addEmpNameBtn.disabled = false;
+    empAbsencesTxt.disabled = false;
+    addEmpBtn.disabled = false;
     confirmEmployeesBtn.disabled = false;
-    document.getElementById("step1").style="background-color: #dddddd";
+    document.getElementById("step1").style="background-color: #b1a8a2f6";
     document.getElementById("step2").style="";
-    document.getElementById("employeeTblDiv").style="opacity: 1";
-    document.getElementById("step5").hidden=false;
+    document.getElementById("employeeTblDiv").style.opacity="1";
+    document.getElementById("addEmpDiv").style.opacity="1";
+    document.getElementById("step4").hidden=false;
     document.getElementById("last2DayDayShiftTxt").value = "";
     document.getElementById("last2DayNightShiftTxt").value = "";
     document.getElementById("lastDayDayShiftTxt").value = "";
     document.getElementById("lastDayNightShiftTxt").value = "";
+    
   } else {
     startDate = '';
     endDate = ''
@@ -222,17 +247,15 @@ function editSchedule() {
   document.getElementById("dataSfarsitTxt").disabled = false;
   document.getElementById("confirmScheduleBtn").disabled = false;
   document.getElementById("empFullNameTxt").disabled = true;
-  document.getElementById("addEmpNameBtn").disabled = true;
+  document.getElementById("empAbsencesTxt").disabled = true;
+  document.getElementById("addEmpBtn").disabled = true;
   document.getElementById("editScheduleBtn").disabled = true;
   document.getElementById("confirmEmployeesBtn").disabled = true;
-  document.getElementById("confirmDatesUnavailableBtn").disabled = true;
   document.getElementById("editEmployeesBtn").disabled = true;
-  document.getElementById("editDatesUnavailableBtn").disabled = true;
   document.getElementById("step1").style="";
-  document.getElementById("step2").style="background-color: #dddddd";
-  document.getElementById("step3").style="background-color: #dddddd";
-  document.getElementById("step4").style="background-color: #dddddd";
-  document.getElementById("step5").style="background-color: #dddddd";
+  document.getElementById("step2").style="background-color: #b1a8a2f6";
+  document.getElementById("step3").style="background-color: #b1a8a2f6";
+  document.getElementById("step4").style="background-color: #b1a8a2f6";
   document.getElementById("employeeTblDiv").style="opacity: 0.5";
 }
 
@@ -243,26 +266,13 @@ function confirmEmployees() {
   } else {
     setEmployeeTotalShifts(dayJson, employeeObject);
 
-    let empListSelect = document.getElementById("empListSelect");
-    let empNames = Object.keys(employeeObject);
-
-    for (i = empListSelect.options.length; i >= 0; i--) {
-      empListSelect.options.remove(i);
-    }
-
-    Object.entries(empNames).map(empNameEntry => {
-      let empName = empNameEntry[1]
-      let option = document.createElement("option");
-      option.appendChild(document.createTextNode(empName));
-      empListSelect.appendChild(option);
-    })
-
     document.getElementById("empFullNameTxt").disabled = true;
-    document.getElementById("addEmpNameBtn").disabled = true;
+    document.getElementById("empAbsencesTxt").disabled = true;
+    document.getElementById("addEmpBtn").disabled = true;
     document.getElementById("confirmEmployeesBtn").disabled = true;
     document.getElementById("editEmployeesBtn").disabled = false;
     document.getElementById("editEmployeesBtn").disabled = false;
-    document.getElementById("step2").style = "background-color: #dddddd";
+    document.getElementById("step2").style = "background-color: #b1a8a2f6";
     document.getElementById("employeeTblDiv").style = "opacity: 0.5";
     if (modifiedEmployees) {
       document.getElementById("generateScheduleBtn").disabled = true;
@@ -277,10 +287,10 @@ function confirmEmployees() {
       document.getElementById("lastDayNightShiftTxt").disabled = false;
     } else {
       document.getElementById("step4").style = "";
-      document.getElementById("confirmDatesUnavailableBtn").disabled = false;
-      document.getElementById("addEmpDatesUnavailableBtn").disabled = false;
-      document.getElementById("empDateUnavailableTxt").disabled = false;
-      document.getElementById("empListSelect").disabled = false;
+      document.getElementById("step4").hidden = false;
+      document.getElementById("generateScheduleBtn").disabled = false;
+      document.getElementById("scheduleTblDiv").style = "opacity: 1";
+      
     }
   }
 }
@@ -289,20 +299,16 @@ function confirmEmployees() {
 function editEmployees() {
   modifiedEmployees = true;
   document.getElementById("empFullNameTxt").disabled = false;
-  document.getElementById("addEmpNameBtn").disabled = false;
+  document.getElementById("empAbsencesTxt").disabled = false;
+  document.getElementById("addEmpBtn").disabled = false;
   document.getElementById("confirmEmployeesBtn").disabled = false;
   document.getElementById("editEmployeesBtn").disabled = true;
-  document.getElementById("confirmDatesUnavailableBtn").disabled = true;
   document.getElementById("confirmScheduleBtn").disabled = true;
   document.getElementById("editEmployeesBtn").disabled = true;
-  document.getElementById("addEmpDatesUnavailableBtn").disabled = true;
-  document.getElementById("empDateUnavailableTxt").disabled = true;
-  document.getElementById("editDatesUnavailableBtn").disabled = true;
-  document.getElementById("step1").style="background-color: #dddddd";
+  document.getElementById("step1").style="background-color: #b1a8a2f6";
   document.getElementById("step2").style="";
-  document.getElementById("step3").style="background-color: #dddddd";
-  document.getElementById("step4").style="background-color: #dddddd";
-  document.getElementById("step5").style="background-color: #dddddd";
+  document.getElementById("step3").style="background-color: #b1a8a2f6";
+  document.getElementById("step4").style="background-color: #b1a8a2f6";
   document.getElementById("employeeTblDiv").style="opacity: 1";
 }
 
@@ -333,13 +339,12 @@ function confirmLast2Days() {
 
     document.getElementById("confirmLast2DaysBtn").disabled = true;
     document.getElementById("editLast2DaysBtn").disabled = false;
-    document.getElementById("confirmDatesUnavailableBtn").disabled = false;
-    document.getElementById("addEmpDatesUnavailableBtn").disabled = false;
-    document.getElementById("empDateUnavailableTxt").disabled = false;
-    document.getElementById("empListSelect").disabled = false;
-    document.getElementById("last2DaysTblDiv").style = "opacity: 0.5";
-    document.getElementById("step3").style = "background-color: #dddddd;";
+    document.getElementById("last2DaysTblDiv").style.opacity = "0.5";
+    document.getElementById("step3").style = "background-color: #b1a8a2f6;";
     document.getElementById("step4").style = "";
+    document.getElementById("generateScheduleBtn").disabled = false;
+    document.getElementById("scheduleTblDiv").style.opacity = "1";
+
     last2DayDayShiftTxt.disabled = true;
     last2DayNightShiftTxt.disabled = true;
     lastDayDayShiftTxt.disabled = true;
@@ -359,43 +364,10 @@ function editLast2Days() {
   document.getElementById("last2DayNightShiftTxt").disabled = false;
   document.getElementById("lastDayDayShiftTxt").disabled = false;
   document.getElementById("lastDayNightShiftTxt").disabled = false;
-  document.getElementById("step1").style="background-color: #dddddd";
-  document.getElementById("step2").style="background-color: #dddddd";
+  document.getElementById("step1").style="background-color: #b1a8a2f6";
+  document.getElementById("step2").style="background-color: #b1a8a2f6";
   document.getElementById("step3").style="";
-  document.getElementById("step4").style="background-color: #dddddd";
-  document.getElementById("step5").style="background-color: #dddddd";
-}
-
-/** Page actions for when the Confirm button is clicked in the STEP4 section. */
-function confirmDatesUnavailable() {
-  if (modifiedAbsences) {
-    document.getElementById("generateScheduleBtn").disabled = true;
-  }
-  document.getElementById("addEmpDatesUnavailableBtn").disabled = true;
-  document.getElementById("empDateUnavailableTxt").disabled = true;
-  document.getElementById("confirmDatesUnavailableBtn").disabled = true;
-  document.getElementById("empListSelect").disabled = true;
-  document.getElementById("editDatesUnavailableBtn").disabled = false;
-  document.getElementById("generateScheduleBtn").disabled = false;
-  document.getElementById("step4").style="background-color: #dddddd;";
-  document.getElementById("step5").style="";
-  document.getElementById("scheduleTblDiv").style="opacity: 1";
-}
-
-/** Page actions for when the Edit button is clicked in the STEP4 section. */
-function editDatesUnavailable() {
-  modifiedAbsences = true;
-  document.getElementById("addEmpDatesUnavailableBtn").disabled = false;
-  document.getElementById("empDateUnavailableTxt").disabled = false;
-  document.getElementById("confirmDatesUnavailableBtn").disabled = false;
-  document.getElementById("empListSelect").disabled = false;
-  document.getElementById("editDatesUnavailableBtn").disabled = true;
-  document.getElementById("step1").style="background-color: #dddddd";
-  document.getElementById("step2").style="background-color: #dddddd";
-  document.getElementById("step3").style="background-color: #dddddd";
-  document.getElementById("step4").style="";
-  document.getElementById("step5").style="background-color: #dddddd";
-  document.getElementById("employeeTblDiv").style="opacity: 0.5";
+  document.getElementById("step4").style="background-color: #b1a8a2f6";
 }
 
 /** Reloads page */

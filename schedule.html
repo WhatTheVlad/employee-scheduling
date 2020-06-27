@@ -13,18 +13,20 @@
     <form>
         <!-- STEP 1: ADD REFERENCE DATES -->
         <div id="step1">
+            <h3 align="center"> Selectare Perioadă </h3>
             <div>
-                <h3 align="center"> Selectare Perioadă </h3>
-                <div style="float: left;">
-                    <input type="text" id="dataInceputTxt" name="dataInceputTxt" placeholder="ex: 15.03.2020">
-                    <label for="dataInceputTxt">Dată Început:</label>
-                </div>
-                <div style="float: left;">
-                    <input type="text" id="dataSfarsitTxt" name="dataSfarsitTxt" placeholder="ex:  30.03.2020">
-                    <label for="dataSfarsitTxt">Dată Sfârșit:</label>
+                <div style="float: left; position: relative; left: 22%;">
+                    <div style="float: left;">
+                        <input type="text" id="dataInceputTxt" name="dataInceputTxt" placeholder="ex: 15.03.2020">
+                        <label for="dataInceputTxt">Dată Început:</label>
+                    </div>
+                    <div style="float: left;">
+                        <input type="text" id="dataSfarsitTxt" name="dataSfarsitTxt" placeholder="ex:  30.03.2020">
+                        <label for="dataSfarsitTxt">Dată Sfârșit:</label>
+                    </div>
                 </div>
             </div>
-            <br>
+            <br><br>
             <div style="padding: 10px; padding-top: 15px">
                 <button type="button" id="confirmScheduleBtn" name="confirmScheduleBtn" onclick="confirmSchedule()">
                     Confirm
@@ -37,24 +39,43 @@
         </div>
         <hr>
         <!-- STEP 2: ADD EMPLOYEES -->
-        <div id="step2" style="background-color: #dddddd">
+        <div id="step2" style="background-color: #b1a8a2f6">
             <h3 align="center"> Listă Angajați </h3>
-            <div style="align-self: center;">
-                <input type="text" id="empFullNameTxt" name="empFullNameTxt" disabled="true"
-                    placeholder="ex: Florin Piersic">
-                <label for="empFullName">Nume Angajat:</label>
-                <button type="button" id="addEmpNameBtn" name="addEmpNameBtn" disabled="true" onclick="addEmployee()">
-                    Salvează
-                </button>
+            <div style="align-self: center; position: relative; left: 30%;">
+                <div id="addEmpDiv" name="addEmpDiv" style="float: left; width: 40%;  opacity: 0.5; border: solid 3px;">
+                        <div style="float: left; position: relative; left: 8px; ">
+                            <div>
+                                <input type="text" id="empFullNameTxt" name="empFullNameTxt" disabled="true"
+                                    placeholder="ex: Florin Piersic">
+                                <label for="empFullName">Nume Angajat:</label>
+                            </div>
+                            <br>
+                            <div>
+                                <input type="text" id="empAbsencesTxt" name="empAbsencesTxt" disabled="true"
+                                    placeholder="ex: 14.07.2020, 15.07.2020" style="position: relative; left: 15px">
+                                <label for="empAbsencesTxt">Date Absențe:</label>
+                            </div>
+                        </div>
+                        <br><br>
+                        <div style="float: left; position: relative; left: 60px; top: 2px;">
+                            <div>
+                                <button type="button" id="addEmpBtn" name="addEmpBtn" disabled="true" onclick="addEmployee()">
+                                    Adaugă
+                                </button>
+                            </div>
+                        </div>
+                </div>
+                <br>
             </div>
-            <br>
-            <div id="employeeTblDiv" style="padding: 10px; opacity: 0.5;" align="center">
+            <br><br><br>
+            <div id="employeeTblDiv" style="padding: 10px; padding-top: 15px; opacity: 0.5;" align="center">
                 <table id="employeeTbl" name="employeeTbl" style="background-color: #f1f369">
                     <thead>
                         <tr>
                             <th>Nume Angajat</th>
                             <th>Total Ture</th>
                             <th>Absențe</th>
+                            <th>Acțiuni</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -74,7 +95,7 @@
         </div>
         <hr>
         <!-- STEP 3: ADD LAST 2 DAYS OF SCHEDULE -->
-        <div id="step3" style="background-color: #dddddd" hidden="true">
+        <div id="step3" style="background-color: #b1a8a2f6" hidden="true">
             <h3 align="center"> Zile Referință </h3>
             <div style="padding: 3px;">
                 <div id="last2DaysTblDiv" style="padding-top: 15px; opacity: 0.5;" align="center">
@@ -123,53 +144,28 @@
             </div>
             <hr>
         </div>
-        <!-- STEP 4: ADD ABSENCES -->
-        <div id="step4" style="background-color: #dddddd">
-            <h3 align="center"> Absențe </h3>
-            <div style="padding: 3px;">
-                <select id="empListSelect" name="empListSelect" disabled="true"></select>
-                <label for="empListSelect">Alege Angajat:</label>
-            </div>
-            <br>
-            <div style="padding: 3px;">
-                <input type="text" id="empDateUnavailableTxt" name="empDateUnavailableTxt" disabled="true"
-                    placeholder="ex: 14.07.2020, 15.07.2020">
-                <label for="empDateUnavailableTxt">Date Absențe:</label>
-                <button type="button" id="addEmpDatesUnavailableBtn" name="addEmpDatesUnavailableBtn" disabled="true"
-                    style="float: center;" onclick="addDatesUnavailable()">
-                    Salvează
-                </button>
-                <div style="padding: 10px; padding-top: 15px;">
-                    <button type="button" id="confirmDatesUnavailableBtn" name="confirmDatesUnavailableBtn"
-                        disabled="true" onclick="confirmDatesUnavailable()">
-                        Confirm
+        <!-- STEP 4: GENERATE SCHEDULE -->
+        <div id="step4" style="background-color: #b1a8a2f6" hidden=false;>
+            <h3 id="step4Header" align="center" disabled="true"> Program </h3>
+            <div style="position:relative; left: 10px;">
+                <div style="padding: 10px;">
+                    <button type="button" id="generateScheduleBtn" name="generateScheduleBtn" disabled="true"
+                        onclick="generateSchedule()" style="position:relative; right: 8px;">
+                        Calculează
                     </button>
-                    <button type="button" id="editDatesUnavailableBtn" name="editDatesUnavailableBtn" disabled="true"
-                        onclick="editDatesUnavailable()">
-                        Modific
-                    </button>
+                </div>
+                <div id="scheduleTblDiv" style="padding-top: 15px; opacity: 0.5;">
+                    <table id="scheduleTbl" name="scheduleTbl" style="padding:3px; background-color: #f1f369">
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <div style="padding-top: 10px;">
+                        <a id="downloadLink" onclick="exportScheduleToExcel(this)">Export Excel</a>
+                    </div>
                 </div>
             </div>
         </div>
-        <hr>
-        <!-- STEP 5: GENERATE SCHEDULE -->
-        <div id="step5" style="background-color: #dddddd" hidden=true;>
-            <h3 align="center"> Program </h3>
-            <div style="padding: 10px;">
-                <button type="button" id="generateScheduleBtn" name="generateScheduleBtn" disabled="true"
-                    onclick="generateSchedule()">
-                    Calculează
-                </button>
-            </div>
-            <div id="scheduleTblDiv" style="padding-top: 15px; opacity: 0.5;">
-                <table id="scheduleTbl" name="scheduleTbl" style="padding:3px; background-color: #f1f369">
-                    <tbody>
-                    </tbody>
-                </table>
-                <a id="downloadLink" onclick="exportScheduleToExcel(this)">Export Excel</a>
-            </div>
-        </div>
-        <button type="button" id="reloadPageBtn" name="reloadPageBtn" onclick="reloadPage()">Reset</button>
+        <button type="button" id="reloadPageBtn" name="reloadPageBtn" onclick="reloadPage()" style="position: relative; left: 50%;">Reset</button>
     </form>
 
     <script src="schedule.js"></script>
