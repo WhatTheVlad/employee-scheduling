@@ -220,11 +220,11 @@ function confirmSchedule() {
     empAbsencesTxt.disabled = false;
     addEmpBtn.disabled = false;
     confirmEmployeesBtn.disabled = false;
-    document.getElementById("step1").style="background-color: #b1a8a2f6";
-    document.getElementById("step2").style="";
-    document.getElementById("employeeTblDiv").style.opacity="1";
-    document.getElementById("addEmpDiv").style.opacity="1";
-    document.getElementById("step4").hidden=false;
+    document.getElementById("step1").style.backgroundColor = "#b1a8a2f6";
+    document.getElementById("step2").style.backgroundColor = "";
+    document.getElementById("employeeTblDiv").style.opacity = "1";
+    document.getElementById("addEmpDiv").style.opacity = "1";
+    document.getElementById("step4").hidden = false;
     document.getElementById("last2DayDayShiftTxt").value = "";
     document.getElementById("last2DayNightShiftTxt").value = "";
     document.getElementById("lastDayDayShiftTxt").value = "";
@@ -250,10 +250,10 @@ function editSchedule() {
   document.getElementById("editScheduleBtn").disabled = true;
   document.getElementById("confirmEmployeesBtn").disabled = true;
   document.getElementById("editEmployeesBtn").disabled = true;
-  document.getElementById("step1").style="";
-  document.getElementById("step2").style="background-color: #b1a8a2f6";
-  document.getElementById("step3").style="background-color: #b1a8a2f6";
-  document.getElementById("employeeTblDiv").style="opacity: 0.5";
+  document.getElementById("step1").style.backgroundColor = "";
+  document.getElementById("step2").style.backgroundColor = "#b1a8a2f6";
+  document.getElementById("step3").style.backgroundColor = "#b1a8a2f6";
+  document.getElementById("employeeTblDiv").style.opacity = "0.5";
 }
 
 /** Page actions for when the Confirm button is clicked in the STEP2 section. */
@@ -269,19 +269,19 @@ function confirmEmployees() {
     document.getElementById("confirmEmployeesBtn").disabled = true;
     document.getElementById("editEmployeesBtn").disabled = false;
     document.getElementById("editEmployeesBtn").disabled = false;
-    document.getElementById("step2").style = "background-color: #b1a8a2f6";
-    document.getElementById("employeeTblDiv").style = "opacity: 0.5";
+    document.getElementById("step2").style.backgroundColor = "#b1a8a2f6";
+    document.getElementById("employeeTblDiv").style.opacity = "0.5";
     if (useReferenceDays) {
       document.getElementById("confirmLast2DaysBtn").disabled = false;
-      document.getElementById("step3").style = "";
-      document.getElementById("last2DaysTblDiv").style = "opacity: 1";
+      document.getElementById("step3").style.backgroundColor = "";
+      document.getElementById("last2DaysTblDiv").style.opacity = "1";
       document.getElementById("last2DayDayShiftTxt").disabled = false;
       document.getElementById("last2DayNightShiftTxt").disabled = false;
       document.getElementById("lastDayDayShiftTxt").disabled = false;
       document.getElementById("lastDayNightShiftTxt").disabled = false;
     } else {
       document.getElementById("generateScheduleBtn").disabled = false;
-      document.getElementById("scheduleTblDiv").style = "opacity: 1";
+      document.getElementById("scheduleTblDiv").style.opacity = "1";
       
     }
   }
@@ -297,10 +297,10 @@ function editEmployees() {
   document.getElementById("editEmployeesBtn").disabled = true;
   document.getElementById("confirmScheduleBtn").disabled = true;
   document.getElementById("editEmployeesBtn").disabled = true;
-  document.getElementById("step1").style="background-color: #b1a8a2f6";
-  document.getElementById("step2").style="";
-  document.getElementById("step3").style="background-color: #b1a8a2f6";
-  document.getElementById("employeeTblDiv").style="opacity: 1";
+  document.getElementById("step1").style.backgroundColor = "#b1a8a2f6";
+  document.getElementById("step2").style.backgroundColor = "";
+  document.getElementById("step3").style.backgroundColor = "#b1a8a2f6";
+  document.getElementById("employeeTblDiv").style.opacity = "1";
 }
 
 /** Page actions for when the Confirm button is clicked in the STEP3 section. */
@@ -331,8 +331,8 @@ function confirmLast2Days() {
     document.getElementById("confirmLast2DaysBtn").disabled = true;
     document.getElementById("editLast2DaysBtn").disabled = false;
     document.getElementById("last2DaysTblDiv").style.opacity = "0.5";
-    document.getElementById("step3").style = "background-color: #b1a8a2f6;";
-    document.getElementById("step4").style = "";
+    document.getElementById("step3").style.backgroundColor = "#b1a8a2f6;";
+    document.getElementById("step4").style.backgroundColor = "";
     document.getElementById("generateScheduleBtn").disabled = false;
     document.getElementById("scheduleTblDiv").style.opacity = "1";
 
@@ -350,19 +350,21 @@ function editLast2Days() {
   modifiedReferenceDays = true;
   document.getElementById("confirmLast2DaysBtn").disabled = false;
   document.getElementById("editLast2DaysBtn").disabled = true;
-  document.getElementById("last2DaysTblDiv").style = "opacity: 1";
   document.getElementById("last2DayDayShiftTxt").disabled = false;
   document.getElementById("last2DayNightShiftTxt").disabled = false;
   document.getElementById("lastDayDayShiftTxt").disabled = false;
   document.getElementById("lastDayNightShiftTxt").disabled = false;
-  document.getElementById("step1").style="background-color: #b1a8a2f6";
-  document.getElementById("step2").style="background-color: #b1a8a2f6";
-  document.getElementById("step3").style="";
+  document.getElementById("step1").style.backgroundColor = "#b1a8a2f6";
+  document.getElementById("step2").style.backgroundColor = "#b1a8a2f6";
+  document.getElementById("step3").style.backgroundColor = "";
+  document.getElementById("last2DaysTblDiv").style.opacity = "1";
 }
 
 /** Reloads page */
 function reloadPage() {
-  location.reload(true);
+  if(confirm('Confirmați stergerea datelor curente.')){
+    location.reload(true);
+  }
 }
 
 /*

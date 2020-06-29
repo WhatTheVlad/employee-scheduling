@@ -14,8 +14,8 @@
         <!-- STEP 1: ADD REFERENCE DATES -->
         <div id="step1">
             <h3 align="center"> Selectare Perioadă </h3>
-            <div>
-                <div style="float: left; position: relative; left: 22%;">
+            <div style="width: 100%;">
+                <div style="float: left; position: relative; left: 17.5%;">
                     <div style="float: left;">
                         <input type="text" id="dataInceputTxt" name="dataInceputTxt" placeholder="ex: 15.03.2020">
                         <label for="dataInceputTxt">Dată Început:</label>
@@ -41,8 +41,8 @@
         <!-- STEP 2: ADD EMPLOYEES -->
         <div id="step2" style="background-color: #b1a8a2f6">
             <h3 align="center"> Listă Angajați </h3>
-            <div style="align-self: center; position: relative; left: 30%;">
-                <div id="addEmpDiv" name="addEmpDiv" style="float: left; width: 40%;  opacity: 0.5; border: solid 3px;">
+            <div style="align-self: center; position: relative; left: 27%;">
+                <div id="addEmpDiv" name="addEmpDiv" style="float: left; width: 45%;  opacity: 0.5; border: solid 3px;">
                         <div style="float: left; position: relative; left: 8px; ">
                             <div>
                                 <input type="text" id="empFullNameTxt" name="empFullNameTxt" disabled="true"
@@ -56,18 +56,21 @@
                                 <label for="empAbsencesTxt">Date Absențe:</label>
                             </div>
                         </div>
-                        <br><br>
-                        <div style="float: left; position: relative; left: 60px; top: 2px;">
+                        <br><br><br>
+                        <div style="float: left; position: relative; left: 5%;">
                             <div>
                                 <button type="button" id="addEmpBtn" name="addEmpBtn" disabled="true" onclick="addEmployee()">
                                     Adaugă
                                 </button>
+                                <br>
+                                <br>
                             </div>
                         </div>
+                        <br>
                 </div>
                 <br>
             </div>
-            <br><br><br>
+            <br><br><br><br>
             <div id="employeeTblDiv" style="padding: 10px; padding-top: 15px; opacity: 0.5;" align="center">
                 <table id="employeeTbl" name="employeeTbl" style="background-color: #f1f369">
                     <thead>
